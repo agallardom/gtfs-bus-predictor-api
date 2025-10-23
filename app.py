@@ -179,7 +179,7 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
 # FUNCIÓN PRINCIPAL DE EJECUCIÓN
 # ===================================================
 
-def main_predictor(grupo_a_consultar=GRUPO_DEFAULT):
+def main_predictor(group_name=GRUPO_DEFAULT): 
     """Carga todos los datos GTFS y procesa todas las paradas definidas."""
     
     try:
@@ -229,12 +229,12 @@ def main_predictor(grupo_a_consultar=GRUPO_DEFAULT):
     # 4. Obtener la lista de paradas del grupo solicitado
     
     # Verificar si el grupo existe en la configuración
-    if grupo_a_consultar not in GRUPOS_PARADAS:
+    if group_name not in GRUPOS_PARADAS:
         grupos_disponibles = ", ".join(GRUPOS_PARADAS.keys())
-        return f"Error: El grupo '{grupo_a_consultar}' no existe. Grupos disponibles: {grupos_disponibles}"
+        return f"Error: El grupo '{group_name}' no existe. Grupos disponibles: {grupos_disponibles}"
         
     # Obtener la lista de IDs a procesar
-    paradas_a_procesar = GRUPOS_PARADAS[grupo_a_consultar]
+    paradas_a_procesar = GRUPOS_PARADAS[group_name]
     
     # 5. Iniciar el procesamiento de múltiples paradas
     resultados_totales = {}
@@ -279,7 +279,7 @@ def main_predictor(grupo_a_consultar=GRUPO_DEFAULT):
         resultados_totales[parada_id] = resultados_parada
         
         # 6. Formatear la salida final para la Terminal
-        #salida = f"Resultados para {len(paradas_a_procesar)} paradas del grupo '{grupo_a_consultar}' ({ahora.strftime('%H:%M:%S')}):\n"    
+        #salida = f"Resultados para {len(paradas_a_procesar)} paradas del grupo '{group_name}' ({ahora.strftime('%H:%M:%S')}):\n"    
         #for p_id, res in resultados_totales.items():
         #    if 'error' in res:
         #        salida += f"  🛑 Error en {p_id}: {res['error']}\n"
@@ -316,7 +316,7 @@ def get_bus_schedule(grupo):
         return jsonify({"error": f"Grupo '{grupo}' no encontrado. Grupos disponibles: {list(GRUPOS_PARADAS.keys())}"}), 404
 
     # Llamar al predictor con el grupo seleccionado
-    resultados = main_predictor(grupo_a_consultar=grupo)
+    resultados = main_predictor(group_name=grupo)
     
     # La función main_predictor debe devolver el diccionario de resultados, NO el string de salida
     if isinstance(resultados, str) and resultados.startswith("Error"):
