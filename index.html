@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Visor de Horarios GTFS</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input[type="text"] { padding: 10px; width: 300px; margin-right: 10px; }
+        button { padding: 10px 20px; cursor: pointer; }
+        pre { background-color: #f4f4f4; padding: 15px; border: 1px solid #ddd; overflow-x: auto; }
+        .container { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Consulta de Horarios de Bus</h1>
+
+    <div class="input-group">
+        <input type="hidden" id="apiUrlBase" value="https://gtfs-bus-predictor-api.onrender.com/api/bus/">
+        
+        <input type="text" id="groupName" value="CASA" placeholder="Introduce el nombre del grupo (ej: CASA)">
+        <button onclick="fetchData()">Consultar API</button>
+    </div>
+
+    <div class="container">
+        <h2>Respuesta JSON:</h2>
+        <pre id="jsonResponse">Esperando consulta...</pre>
+        <p id="statusMessage" style="color: red;"></p>
+    </div>
+
+    <script>
+        function fetchData() {
+            const baseUrl = document.getElementById('apiUrlBase').value;
+            const groupName = document.getElementById('groupName').value.trim();
+            const responseElement = document.getElementById('jsonResponse');
+            const statusElement = document.getElementById('statusMessage');
+
+            if (!groupName) {
+                statusElement.textContent = "Por favor, introduce un nombre de grupo.";
+                return;
+            }
+
+            const url = baseUrl + groupName;
+            responseElement.textContent = `Consultando: ${url}...`;
+            statusElement.textContent = '';
+
+            fetch(url)
+                .then(response => {
+                    // Manejo de errores HTTP (como 404 Not Found)
+                    if (!response.ok) {
+                        // Lanza un error para ser capturado en el .catch()
+                        throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Muestra el JSON formateado
+                    responseElement.textContent = JSON.stringify(data, null, 4);
+                })
+                .catch(error => {
+                    // Muestra el error, incluyendo cualquier timeout o error CORS
+                    responseElement.textContent = 'Error al obtener datos.';
+                    statusElement.textContent = `Hubo un problema: ${error.message}. Verifica si la URL es correcta y si la API está activa.`;
+                    console.error('Fetch Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

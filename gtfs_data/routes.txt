@@ -1,0 +1,84 @@
+agency_id,route_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_branding_url,route_sort_order
+ABR_1,ABR_1,Urbà,Nucli urbà - Estació FGC,,3,,6db51d,ffffff,,3
+AMB_62,AMB_248,SB1,Camps Blancs-FGC Molí Nou,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:248,ffaa00,343434,,3
+AMB_62,AMB_249,SB2,FGC St. Boi-Camps Blancs,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:249,ffaa00,343434,,3
+AMB_34,AMB_389,MB3,Molins R.-FGC La Floresta,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:389,ffaa00,343434,,3
+AMB_34,AMB_449,SV4,FGC St. Vicenç/Sant Roc,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:449,ffaa00,343434,,3
+AMB_34,AMB_450,ESC,FGC St. Vicenç-Instituts,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:450,ffaa00,343434,,3
+FGC_,FGC_FV,FV,Funicular de Vallvidrera,,7,http://www.fgc.cat/cat/barcelona-valles.asp,0A57A3,FFFFFF,,7
+FGC_,FGC_L1,L1,Cremallera de Nuria,,7,,000000,FFFFFF,,7
+FGC_,FGC_L12,L12,Sarrià - Reina Elisenda,,1,http://fgc.cat/cat/barcelona-valles.asp?linia=L12,b2aed3,FFFFFF,,1
+FGC_,FGC_L6,L6,Barcelona Pl. Catalunya - Sarrià,,1,http://www.fgc.cat/cat/barcelona-valles.asp?linia=L6,797FBC,FFFFFF,,1
+FGC_,FGC_L7,L7,Barcelona Pl. Catalunya - Av Tibidabo,,1,http://www.fgc.cat/cat/barcelona-valles.asp?linia=L7,B2600B,FFFFFF,,1
+FGC_,FGC_L8,L8,Barcelona Pl. Espanya - Molí Nou,,1,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=L8,E274AA,FFFFFF,,1
+FGC_,FGC_MM,MM,Cremallera Montserrat,,7,,000000,FFFFFF,,7
+FGC_,FGC_R5,R5,Barcelona Pl. Espanya - Manresa,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R5,3dbfc3,FFFFFF,,2
+FGC_,FGC_R50,R50,Barcelona Pl. Espanya- Manresa,,2,http://fgc.cat/cat/llobregat-anoia.asp?linia=R50,00738a,FFFFFF,,2
+FGC_,FGC_R53,R53,Barcelona Pl. Espanya - Manresa,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R5,3dbfc3,FFFFFF,,2
+FGC_,FGC_R6,R6,Barcelona Pl. Espanya - Igualada,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R6,b3b3b3,FFFFFF,,2
+FGC_,FGC_R60,R60,Barcelona Pl. Espanya - Igualada,,2,http://fgc.cat/cat/llobregat-anoia.asp?linia=R60,5b5b5b,FFFFFF,,2
+FGC_,FGC_R63,R63,Barcelona Pl. Espanya - Igualada,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R6,b3b3b3,FFFFFF,,2
+FGC_,FGC_RL1,RL1,Lleida - La Pobla,,2,,FF8000,FFFFFF,,2
+FGC_,FGC_RL2,RL2,Lleida - La Pobla,,2,,FF8000,FFFFFF,,2
+FGC_,FGC_S1,S1,Barcelona Pl. Catalunya - Terrassa Nacions Unides,,2,http://www.fgc.cat/cat/barcelona-valles.asp?linia=S1,EF7900,FFFFFF,,2
+FGC_,FGC_S2,S2,Barcelona Pl. Catalunya - Sabadell Parc del Nord,,2,http://www.fgc.cat/cat/barcelona-valles.asp?linia=S2,88BB0B,FFFFFF,,2
+FGC_,FGC_S3,S3,Barcelona Pl. Espanya - Can Ros,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=S33,4F868E,FFFFFF,,2
+FGC_,FGC_S4,S4,Barcelona Pl. Espanya - Olesa de Montserrat,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=S4,A78600,FFFFFF,,2
+FGC_,FGC_S8,S8,Barcelona Pl. Espanya - Martorell Enllaç,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=S8,49C0DE,FFFFFF,,2
+FGC_,FGC_S9,S9,Barcelona Pl. Espanya - Quatre Camins,,2,,DF4661,FFFFFF,,2
+GEN_42674,GEN_0151,L0151,Bellaterra (FGC) - Cerdanyola,,3,,009485,ffffff,,3
+GEN_42547,GEN_0215,C1,Capellades - Estació d'FGC,,3,,009485,ffffff,,3
+GEN_42547,GEN_0216,L0216,Urbà de Piera: Piera (FGC) - Capellades,,3,,009485,ffffff,,3
+GEN_42547,GEN_0367,H1,Hostalets de Pierola - Piera (FGC),,3,,009485,ffffff,,3
+GEN_42674,GEN_1619,PA,Estació FGC Bellaterra - Parc Alba,,3,,009485,ffffff,,3
+ROD_1071,ROD_1.RG1,RG1,Portbou - L'Hospitalet de Llobregat,,2,,007cc2,ffffff,,2
+ROD_1071,ROD_51T0001R1,R1,L'Hospitalet de Llobregat - Maçanet-Massanes,,2,,7DBCEC,FFFFFF,,2
+ROD_1071,ROD_51T0003R2N,R2N,Aeroport - Maçanet-Massanes,,2,,D0DF00,FFFFFF,,2
+ROD_1071,ROD_51T0005R4,R4,Sant Vicenç de Calders - Manresa,,2,,F7A30D,FFFFFF,,2
+ROD_1071,ROD_51T0007R2S,R2S,Sant Vicenç de Calders - Barcelona-Estació de França,,2,,146520,FFFFFF,,2
+ROD_1071,ROD_51T0013R2,R2,Castelldefels - Granollers Centre,,2,,07a64a,FFFFFF,,2
+ROD_1071,ROD_51T0015R3,R3,La Garriga - La Tor de Querol-Enveig,,2,,EB4128,FFFFFF,,2
+ROD_1071,ROD_51T0021R7,R7,Fabra i Puig - Cerdanyola - Universitat,,2,,B57CBB,FFFFFF,,2
+ROD_1071,ROD_51T0023R8,R8,Martorell Central - Granollers Centre,,2,,88016A,FFFFFF,,2
+ROD_1071,ROD_Linia Blau Clar_Anada,Linia Blau Clar,Barcelona Fabra i Puig - Centelles,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,3ea5ea,FFFFFF,,3
+ROD_1071,ROD_Linia Blau Clar_Tornada,Linia Blau Clar Tornada,Centelles - Barcelona Fabra i Puig,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,3ea5ea,FFFFFF,,3
+ROD_1071,ROD_Linia Blava_Anada,Linia Blava,Barcelona Fabra i Puig - Granollers Canovelles,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,0065bd,FFFFFF,,3
+ROD_1071,ROD_Linia Blava_Tornada,Linia Blava Tornada,Granollers Canovelles - Barcelona Fabra i Puig,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,0065bd,FFFFFF,,3
+ROD_1071,ROD_Linia Lila_Anada,Linia Lila,Barcelona Fabra i Puig - La Garriga (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,8e579a,FFFFFF,,3
+ROD_1071,ROD_Linia Lila_Tornada,Linia Lila Tornada,La Garriga - Barcelona Fabra i Puig (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,8e579a,FFFFFF,,3
+ROD_1071,ROD_Linia Verda_Anada,Linia Verda,Barcelona Fabra i Puig - Vic (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,44b853,FFFFFF,,3
+ROD_1071,ROD_Linia Verda_Tornada,Linia Verda Tornada,Vic - Barcelona Fabra i Puig (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,44b853,FFFFFF,,3
+ROD_1071,ROD_Linia Vermella_Anada,Linia Vermella,Barcelona Fabra i Puig - Centelles (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,c81e1e,FFFFFF,,3
+ROD_1071,ROD_Linia Vermella_Tornada,Linia Vermella Tornada,Centelles - Barcelona Fabra i Puig (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,c81e1e,FFFFFF,,3
+ROD_1071,ROD_RL3,RL3,Cervera - Lleida Pirineus,,2,https://rodalies.gencat.cat/web/.content/02_Horaris/horaris/RL3RL4.pdf,8b8719,FFFFFF,,2
+ROD_1071,ROD_RT2,RT2,Tarragona-Salou - Port Aventura,,2,https://rodalies.gencat.cat/web/.content/02_Horaris/horaris/R17_RT2.pdf,db87b9,FFFFFF,,2
+SAB_1,SAB_26,L3,L3-LES PLANES - LA FLORESTA - FGC SANT CUGAT,,3,,17cf00,ccffff,,3
+SAB_1,SAB_307,PA,PA-FGC BELLATERRA - RENFE UAB - PARC DE L`ALBA,,3,,f70023,ccffff,,3
+SVH_58,SVH_462,ESC,Estació FGC - G. Mistral - F. Mompou,,3,,633b65,ffffff,,3
+TGO_TGO,TGO_M8D,M8D,Matadepera-Terrassa FGC/RENFE,,3,https://horaris.gruptg.com/tgo/?linia=M8D,0037ff,ffffff,,3
+TUS_109,TUS_1000,L15,La Bassa - Centre,,3,http://www.tus.es,c7921e,ffffff,,3
+TUS_109,TUS_1411,N1,Can Deu - Plaça Picasso,,3,http://www.tus.es,e06178,ffffff,,3
+TUS_109,TUS_1412,N4,El Poblenou - Els Merinals,,3,http://www.tus.es,3de184,ffffff,,3
+TUS_109,TUS_1422,SEM,SETMANA EUROPEA DE LA MOBILITAT,,3,http://www.tus.es,0099cc,ffffff,,3
+TUS_109,TUS_978,L12,Estació Centre - Sant Quirze Parc,,3,http://www.tus.es,7b7223,ffffff,,3
+TUS_109,TUS_979,L1,Can Deu - Estació Sud,,3,http://www.tus.es,e63027,ffffff,,3
+TUS_109,TUS_980,L2,Can Deu - La Creu de Barberà,,3,http://www.tus.es,004996,ffffff,,3
+TUS_109,TUS_981,L3,Can Deu - La Romànica,,3,http://www.tus.es,b05f00,ffffff,,3
+TUS_109,TUS_982,L4,La Roureda - Can Roqueta - El Poblenou,,3,http://www.tus.es,009a42,ffffff,,3
+TUS_109,TUS_983,L5,Can Rull - Les Termes,,3,http://www.tus.es,dd007e,ffffff,,3
+TUS_109,TUS_984,L7,Castellarnau - Can Puiggener,,3,http://www.tus.es,0099cc,ffffff,,3
+TUS_109,TUS_985,L8,La Roureda - Estació Sud,,3,http://www.tus.es,f28d2c,ffffff,,3
+TUS_109,TUS_986,L80,La Plana del Pintor - Plaça de Picasso,,3,http://www.tus.es,9b338a,ffffff,,3
+TUS_109,TUS_987,F1,Can Deu - Estació Sud,,3,http://www.tus.es,e06178,ffffff,,3
+TUS_109,TUS_988,F2,Can Deu - La Creu de Barberà,,3,http://www.tus.es,9794d2,ffffff,,3
+TUS_109,TUS_989,F3,La Plana del Pintor - La Romànica,,3,http://www.tus.es,dcc555,ffffff,,3
+TUS_109,TUS_990,F4,La Roureda - El Poblenou,,3,http://www.tus.es,7cdfa8,ffffff,,3
+TUS_109,TUS_991,F5,Castellarnau - Les Termes,,3,http://www.tus.es,f8a7d7,ffffff,,3
+TUS_109,TUS_992,F6,Pl. Catalunya - S.P. Riu-sec (Festius Comercials),,3,http://www.tus.es,b0d2f0,ffffff,,3
+TUS_109,TUS_993,F15,La Bassa - Centre,,3,http://www.tus.es,c7921e,ffffff,,3
+TUS_109,TUS_994,L10,Sant Julià - Plaça de Picasso,,3,http://www.tus.es,c4d984,000000,,3
+TUS_109,TUS_995,L11,Castellarnau - Sant Pau de Riu-sec,,3,http://www.tus.es,b0d2f0,000000,,3
+TUS_109,TUS_996,L23,Can Roqueta - Torre-romeu,,3,http://www.tus.es,acaa9f,000000,,3
+TUS_109,TUS_997,L14,Parc Taulí - Can Roqueta,,3,http://www.tus.es,c3002f,ffffff,,3
+TUS_109,TUS_998,L44,Parc Taulí - El Poblenou,,3,http://www.tus.es,ffed00,000000,,3
+TUS_109,TUS_999,L55,Can Llong - Les Termes,,3,http://www.tus.es,00679a,ffffff,,3

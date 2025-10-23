@@ -1,0 +1,11 @@
+# Ignorar carpetas generadas por Python
+__pycache__/
+.venv/
+.mypy_cache/
+.pytest_cache/
+.vscode/
+
+# Ignorar archivos temporales o grandes
+*.log
+*.swp
+
