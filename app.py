@@ -7,11 +7,6 @@ from flask_cors import CORS
 
 
 # --- CONFIGURACIÓN ---
-RUTA_GTFS = 'gtfs_data/'
-ZONA_HORARIA = 'Europe/Madrid' 
-HORA_FORMATO = "%H:%M"
-
-# --- CONFIGURACIÓN ---
 RUTA_GTFS = './gtfs_data/'
 ZONA_HORARIA = 'Europe/Madrid' 
 HORA_FORMATO = "%H:%M"
@@ -50,15 +45,11 @@ CORS(app)  # 2. Habilitar CORS para TODA la aplicación
 # =======================================================
 # 3. Carga GLOBAL DE DATOS (fuera de las rutas)
 # =======================================================
-# ... tu código de carga de Pandas ...
-
-# =======================================================
-# 4. RUTAS DE FLASK
-# =======================================================
-@app.route('/api/bus/<string:group_name>')
+# Aquí iría la carga de datos si estuviera fuera de main_predictor()
+# ...
 
 # ===================================================
-# FUNCIONES AUXILIARES
+# FUNCIONES AUXILIARES (SE MANTIENEN IGUAL)
 # ===================================================
 
 def obtener_lineas_id_parada(parada_id, df_horarios_base, routes_df):
@@ -90,23 +81,13 @@ def obtener_lineas_id_parada(parada_id, df_horarios_base, routes_df):
     # Devuelve la lista de tuplas única
     return resultados
 
+# ----------------------------------------------------
+# SEGUNDA FUNCION AUXILIAR (CALCULADORA DE BUSES)
+# ----------------------------------------------------
 def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_df, ahora, tiempo_actual_str):
     """Calcula los próximos horarios para una única parada, línea por línea."""
-
-    # 1. Obtener los IDs de las líneas que pasan por esta parada
-    lineas_id = obtener_lineas_id_parada(parada_id, df_horarios_base, routes_df) 
-
-    # 2. Filtrar horarios base para esta parada
-    df_horarios_parada = df_horarios_base[df_horarios_base['stop_id'] == parada_id]
     
-    resultados_por_linea = []
-
-
-def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_df, ahora, tiempo_actual_str):
-    # ... (código anterior) ...
-
     # 1. Obtener las combinaciones únicas de (ID de línea, Nombre corto, Destino)
-    # Llama a la función modificada
     lineas_con_destino = obtener_lineas_id_parada(parada_id, df_horarios_base, routes_df) 
 
     # 2. Filtrar horarios base para esta parada
@@ -146,9 +127,8 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
             try:
                 hora_salida = datetime.datetime.strptime(proximo_hora_str, '%H:%M').time()
             except ValueError:
-                # Manejar el formato GTFS 25:XX:XX, si es necesario, 
-                # aunque en la mayoría de casos Pandas lo maneja con la comparación de string
-                continue # Saltar esta línea si hay un error de formato
+                # Si hay un error de formato GTFS (ej. 25:XX:XX), saltar.
+                continue 
 
             dt_proximo = ahora.replace(hour=hora_salida.hour, minute=hora_salida.minute, second=0, microsecond=0)
             if dt_proximo < ahora:
@@ -165,7 +145,7 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
             resultado_linea.update({
                 'proximo_bus': proximo_hora_str,
                 'siguiente_bus': siguiente_hora_str,
-                # Usamos el destino de la iteración, no el del viaje (que puede ser otro)
+                # Usamos el destino de la iteración
                 'destino': trip_headsign, 
                 'minutos_restantes': minutos_restantes
             })
@@ -176,7 +156,7 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
 
 
 # ===================================================
-# FUNCIÓN PRINCIPAL DE EJECUCIÓN
+# FUNCIÓN PRINCIPAL DE EJECUCIÓN (main_predictor)
 # ===================================================
 
 def main_predictor(group_name=GRUPO_DEFAULT): 
@@ -185,7 +165,6 @@ def main_predictor(group_name=GRUPO_DEFAULT):
     try:
         # 1. Cargar datos necesarios
         stops = pd.read_csv(RUTA_GTFS + 'stops.txt', usecols=['stop_id', 'stop_name'])
-        #stops_df = pd.read_csv('./gtfs_data/stops.txt')
         stop_times = pd.read_csv(RUTA_GTFS + 'stop_times.txt', usecols=['trip_id', 'departure_time', 'stop_id'])
         trips = pd.read_csv(RUTA_GTFS + 'trips.txt', usecols=['trip_id', 'service_id', 'trip_headsign', 'route_id'])
         calendar = pd.read_csv(RUTA_GTFS + 'calendar.txt')
@@ -193,18 +172,16 @@ def main_predictor(group_name=GRUPO_DEFAULT):
         routes = pd.read_csv(RUTA_GTFS + 'routes.txt', usecols=['route_id', 'route_short_name', 'route_long_name'])
         
     except FileNotFoundError as e:
-        return f"Error de Archivo: No se encontró un archivo GTFS. {e}"
+        # Esto será capturado por la ruta de Flask
+        raise Exception(f"Error de Archivo: No se encontró un archivo GTFS. {e}")
     except Exception as e:
-        return f"Error al cargar datos GTFS: {e}"
+        raise Exception(f"Error al cargar datos GTFS: {e}")
+
 
     # 2. Definir la hora actual y servicio
     tz = pytz.timezone(ZONA_HORARIA)
     ahora = datetime.datetime.now(tz)
     tiempo_actual_str = ahora.strftime('%H:%M:%S') 
-    
-    # *** PRUEBA DE MEDIANOCHE (si quieres ver todos los buses) ***
-    # tiempo_actual_str = '00:00:00' 
-    
     fecha_hoy_gtfs = int(ahora.strftime('%Y%m%d'))
     
     # 3. Lógica de servicio activo (combinando calendar y calendar_dates)
@@ -222,7 +199,6 @@ def main_predictor(group_name=GRUPO_DEFAULT):
     if not servicios_activos:
         return "No hay servicios programados para hoy."
 
-
     trips_hoy = trips[trips['service_id'].isin(servicios_activos)]
     df_horarios_base = pd.merge(stop_times, trips_hoy, on='trip_id', how='inner')
 
@@ -231,7 +207,7 @@ def main_predictor(group_name=GRUPO_DEFAULT):
     # Verificar si el grupo existe en la configuración
     if group_name not in GRUPOS_PARADAS:
         grupos_disponibles = ", ".join(GRUPOS_PARADAS.keys())
-        return f"Error: El grupo '{group_name}' no existe. Grupos disponibles: {grupos_disponibles}"
+        raise ValueError(f"El grupo '{group_name}' no existe. Grupos disponibles: {grupos_disponibles}")
         
     # Obtener la lista de IDs a procesar
     paradas_a_procesar = GRUPOS_PARADAS[group_name]
@@ -278,59 +254,40 @@ def main_predictor(group_name=GRUPO_DEFAULT):
         resultados_parada['horarios_ordenados'] = horarios_ordenados
         resultados_totales[parada_id] = resultados_parada
         
-        # 6. Formatear la salida final para la Terminal
-        #salida = f"Resultados para {len(paradas_a_procesar)} paradas del grupo '{group_name}' ({ahora.strftime('%H:%M:%S')}):\n"    
-        #for p_id, res in resultados_totales.items():
-        #    if 'error' in res:
-        #        salida += f"  🛑 Error en {p_id}: {res['error']}\n"
-        #    else:
-        #        salida += f"  --- Parada: {res['nombre_parada']} ({p_id}) ---\n"
-                
-        #        # 🛑 USAR LA LISTA ORDENADA
-        #        for linea_data in res['horarios_ordenados']:
-        #            salida += f"    Línea {linea_data['linea']} ({linea_data['destino']}): Próximo {linea_data['proximo_bus']} (en {linea_data['minutos_restantes']} min). Siguiente: {linea_data['siguiente_bus']}\n"
-        #   return salida
-
-
-        # 6. Formatear la salida final para la Terminal (ESTA SECCIÓN SE ELIMINA O COMENTA)
-        # ---------------------------------------------------------------------------------
-        # salida = f"Resultados para {len(paradas_a_procesar)} paradas... (COMENTAR O ELIMINAR)
-        # ...
-        # return salida 
-        # ---------------------------------------------------------------------------------
-
-        # 🛑 NUEVO: Devolver el diccionario completo
-        return resultados_totales
+    # 6. Devolver el diccionario completo
+    return resultados_totales
             
 
 # ===================================================
-# RUTA WEB PARA SERVIR LA API
+# RUTA WEB PARA SERVIR LA API (LA FUNCIÓN QUE DEBE LLEVAR EL DECORADOR)
 # ===================================================
 
-@app.route('/api/bus/<grupo>', methods=['GET'])
+@app.route('/api/bus/<string:grupo>', methods=['GET'])
 def get_bus_schedule(grupo):
     """Ruta que calcula y devuelve los horarios de un grupo de paradas en JSON."""
     
-    # Verifica si el grupo existe antes de ejecutar
-    if grupo not in GRUPOS_PARADAS:
-        return jsonify({"error": f"Grupo '{grupo}' no encontrado. Grupos disponibles: {list(GRUPOS_PARADAS.keys())}"}), 404
+    try:
+        # Llamar al predictor con el grupo seleccionado
+        resultados = main_predictor(group_name=grupo)
+        
+        # Si main_predictor devuelve un string (ej. "No hay servicios..."), manejarlo como error
+        if isinstance(resultados, str):
+             return jsonify({"error": resultados}), 500
+        
+        # Devuelve el diccionario de resultados en formato JSON
+        return jsonify(resultados)
 
-    # Llamar al predictor con el grupo seleccionado
-    resultados = main_predictor(group_name=grupo)
-    
-    # La función main_predictor debe devolver el diccionario de resultados, NO el string de salida
-    if isinstance(resultados, str) and resultados.startswith("Error"):
-        return jsonify({"error": resultados}), 500
-    
-    # Devuelve el diccionario de resultados en formato JSON
-    return jsonify(resultados)
-
+    except ValueError as e:
+        # Captura el error si el grupo no existe (lanzado desde main_predictor)
+        return jsonify({"error": str(e)}), 404
+        
+    except Exception as e:
+        # Captura errores de archivo u otros errores de procesamiento
+        return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
 # ===================================================
 # INICIO DE LA APLICACIÓN
 # ===================================================
 
 if __name__ == '__main__':
-    # 🛑 Cambiamos la forma de iniciar el script para usar el servidor Flask
-    # host='0.0.0.0' es crucial para Docker/Render
     app.run(host='0.0.0.0', port=5000, debug=False)
