@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Estilo base para el cuerpo y la fuente */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8;
@@ -33,8 +34,24 @@
     <h1 id="horarios-titulo" class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">
         🚌 Próximos Horarios de Transporte
     </h1>
+    
+    <!-- NUEVA SECCIÓN: Clave de Usuario -->
+    <div id="key-section" class="bg-gray-50 p-5 rounded-lg border border-gray-200 shadow-inner mb-6">
+        <h2 class="text-xl font-semibold mb-3 text-gray-700">Clave de Usuario Personalizada</h2>
+        <div class="flex flex-col sm:flex-row gap-3">
+            <input type="text" id="user-key-input" placeholder="Introduce tu clave de usuario (ej: 'ANGEL')"
+                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150">
+            <button onclick="saveUserKey()"
+                    class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 transform hover:scale-105">
+                Guardar Clave
+            </button>
+        </div>
+        <p id="key-status" class="mt-2 text-sm text-gray-500"></p>
+    </div>
+    <!-- FIN NUEVA SECCIÓN -->
 
     <div class="flex flex-col sm:flex-row gap-4 mb-6">
+        <!-- 🛑 IMPORTANTE: Asegúrate de que esta URL es la correcta de tu servicio en Render 🛑 -->
         <input type="hidden" id="apiUrlBase" value="https://gtfs-bus-predictor-api.onrender.com/api/"> 
         
         <input 
@@ -47,7 +64,7 @@
         <button 
             onclick="cargarHorarios(document.getElementById('groupName').value.trim())"
             id="fetchButton"
-            class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md"
+            class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md disabled:opacity-50"
         >
             Consultar Grupo
         </button>
@@ -55,7 +72,7 @@
         <button 
             onclick="iniciarCargaDinamica()"
             id="geoButton"
-            class="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 shadow-md"
+            class="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 shadow-md disabled:opacity-50"
         >
             📍 Buscar Cercano
         </button>
@@ -64,7 +81,7 @@
     <p id="statusMessage" class="text-sm text-red-500 mb-4"></p>
 
     <div id="resultsContainer" class="space-y-6">
-        <p class="text-gray-500 text-center p-4">Introduce un grupo o usa la Geolocalización.</p>
+        <p class="text-gray-500 text-center p-4">Introduce tu clave, un grupo o usa la Geolocalización.</p>
     </div>
 
     <p style="text-align: right; font-size: 0.8em; margin-top: 15px;">
@@ -76,17 +93,17 @@
     // VARIABLES GLOBALES Y UTILIDADES
     // =======================================================================
     const API_BASE_URL = document.getElementById('apiUrlBase').value;
-    // No hay grupo por defecto; el usuario debe elegir manual o geo.
     
-    // Función auxiliar para formatear los minutos restantes
     function formatMinutes(minutes) {
         if (minutes === 'N/A') return 'N/A';
         if (minutes === 0) return 'Ahora mismo';
         return `en ${minutes} min`;
     }
 
-    function actualizarEstado(texto) {
-        document.getElementById('statusMessage').textContent = texto;
+    function actualizarEstado(texto, isError = false) {
+        const statusElement = document.getElementById('statusMessage');
+        statusElement.textContent = texto;
+        statusElement.className = `text-sm mb-4 ${isError ? 'text-red-500' : 'text-gray-600'}`;
     }
 
     function actualizarTitulo(grupo, distancia = null) {
@@ -99,6 +116,51 @@
 
     function actualizarTiempo() {
         document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+    }
+    
+    // =======================================================================
+    // GESTIÓN DE LA CLAVE DE USUARIO (NUEVO)
+    // =======================================================================
+    
+    function getUserKey() {
+        return localStorage.getItem('bus_predictor_user_key');
+    }
+
+    function saveUserKey() {
+        const keyInput = document.getElementById('user-key-input');
+        const key = keyInput.value.trim().toUpperCase();
+        const keyStatus = document.getElementById('key-status');
+
+        if (key) {
+            localStorage.setItem('bus_predictor_user_key', key);
+            keyStatus.textContent = `Clave '${key}' guardada correctamente.`;
+            keyStatus.classList.remove('text-red-500');
+            keyStatus.classList.add('text-green-600');
+        } else {
+            localStorage.removeItem('bus_predictor_user_key');
+            keyStatus.textContent = "Clave eliminada. ¡IMPORTANTE! Introduce y guarda tu clave.";
+            keyStatus.classList.remove('text-green-600');
+            keyStatus.classList.add('text-red-500');
+        }
+        // Asegurar que el input refleje la clave guardada o vacía
+        keyInput.value = key; 
+    }
+
+    function loadUserKeyStatus() {
+        const storedKey = getUserKey();
+        const keyInput = document.getElementById('user-key-input');
+        const keyStatus = document.getElementById('key-status');
+
+        if (storedKey) {
+            keyInput.value = storedKey;
+            keyStatus.textContent = `Clave activa: ${storedKey}.`;
+            keyStatus.classList.remove('text-red-500');
+            keyStatus.classList.add('text-green-600');
+        } else {
+            keyStatus.textContent = "¡IMPORTANTE! Introduce y guarda tu clave de usuario para personalizar los grupos.";
+            keyStatus.classList.remove('text-green-600');
+            keyStatus.classList.add('text-red-500');
+        }
     }
 
 
@@ -113,9 +175,8 @@
         for (const stopId in data) {
             const stopData = data[stopId];
             
-            // ... [Tu lógica de tarjeta de error (omito aquí para brevedad)] ...
             if (stopData.error) {
-                const errorCard = `<div class="card bg-yellow-100 p-4 rounded-lg border border-yellow-400"><h3 class="text-xl font-semibold text-yellow-700">🛑 Parada: ${stopId}</h3><p class="text-yellow-600 mt-2">Error: ${stopData.error}</p></div>`;
+                const errorCard = `<div class="card bg-red-100 p-4 rounded-lg border border-red-400"><h3 class="text-xl font-semibold text-red-700">🛑 Parada: ${stopId}</h3><p class="text-red-600 mt-2">Error: ${stopData.error}</p></div>`;
                 container.innerHTML += errorCard;
                 continue;
             }
@@ -129,7 +190,8 @@
             } else {
                 busItemsHTML = horarios.map((bus, index) => {
                     const isSoon = bus.minutos_restantes !== 'N/A' && bus.minutos_restantes < 10;
-                    const bgColor = isSoon ? 'bg-red-500' : 'bg-green-600';
+                    // Usar un color secundario (índigo) si no está a punto de llegar
+                    const bgColor = isSoon ? 'bg-red-500' : 'bg-indigo-600';
 
                     return `
                         <li class="flex justify-between items-center py-2 px-3 border-b last:border-b-0 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
@@ -155,7 +217,7 @@
             }
 
             const cardHTML = `
-                <div class="card bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div id="stop-card-${stopId}" class="card bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <header class="bg-gray-800 text-white p-4">
                         <h2 class="text-xl font-extrabold">📍 ${stopData.nombre_parada}</h2>
                         <p class="text-sm text-gray-400">ID: ${stopId}</p>
@@ -176,18 +238,24 @@
 
 
     // =======================================================================
-    // FUNCIONES DE LLAMADA A LA API
+    // FUNCIONES DE LLAMADA A LA API (MODIFICADAS)
     // =======================================================================
 
     /**
      * Llama a la API principal para obtener los horarios del grupo especificado.
-     * Se usa para la búsqueda manual y para el ciclo de actualización.
      * @param {string} groupName - Nombre del grupo de paradas (ej. 'CASA').
+     * @param {number | null} distance - Distancia en KM (opcional, solo para búsqueda geo).
      */
-    async function cargarHorarios(groupName) {
+    async function cargarHorarios(groupName, distance = null) {
         const fetchButton = document.getElementById('fetchButton');
         const geoButton = document.getElementById('geoButton');
         const resultsContainer = document.getElementById('resultsContainer');
+        const userKey = getUserKey(); // OBTENER CLAVE
+
+        if (!userKey) {
+            actualizarEstado("⚠️ ERROR: Por favor, introduce y guarda tu Clave de Usuario primero.", true);
+            return;
+        }
 
         if (!groupName) {
             actualizarEstado("Por favor, introduce un nombre de grupo.");
@@ -196,12 +264,12 @@
         
         actualizarEstado(`Consultando horarios para ${groupName}...`);
         
-        // Deshabilitar botones
         fetchButton.disabled = true;
         geoButton.disabled = true;
         
         try {
-            const url = API_BASE_URL + 'bus/' + groupName;
+            // AÑADIMOS EL PARÁMETRO 'key' A LA URL
+            const url = `${API_BASE_URL}bus/${groupName}?key=${userKey}`;
             const response = await fetch(url);
             const data = await response.json();
 
@@ -210,13 +278,13 @@
                 throw new Error(errorMessage);
             }
             
-            actualizarTitulo(groupName); // Actualizar solo el título sin distancia
+            actualizarTitulo(groupName, distance); 
             actualizarEstado(`Consulta exitosa para el grupo '${groupName}'.`);
             renderResults(data);
             actualizarTiempo();
 
         } catch (error) {
-            actualizarEstado(`⚠️ Error al consultar: ${error.message}.`);
+            actualizarEstado(`⚠️ Error al consultar: ${error.message}.`, true);
             resultsContainer.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">Error: ${error.message}</div>`;
             console.error('Fetch Error:', error);
         } finally {
@@ -233,21 +301,25 @@
         const fetchButton = document.getElementById('fetchButton');
         const geoButton = document.getElementById('geoButton');
         const resultsContainer = document.getElementById('resultsContainer');
+        const userKey = getUserKey(); // OBTENER CLAVE
+
+        if (!userKey) {
+            actualizarEstado("⚠️ ERROR: Por favor, introduce y guarda tu Clave de Usuario primero.", true);
+            return;
+        }
         
         actualizarEstado("Buscando permiso de Geolocalización...");
         resultsContainer.innerHTML = `<div class="text-center text-gray-600 p-8">Esperando la ubicación...</div>`;
 
         if (!navigator.geolocation) {
-            actualizarEstado("ERROR: Geolocalización no soportada.");
+            actualizarEstado("ERROR: Geolocalización no soportada.", true);
             resultsContainer.innerHTML = `<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 p-4 rounded-lg">Tu dispositivo no soporta geolocalización. Usa la búsqueda manual.</div>`;
             return;
         }
         
-        // Deshabilitar botones mientras se busca la ubicación
         fetchButton.disabled = true;
         geoButton.disabled = true;
 
-        // Obtener la ubicación del usuario
         navigator.geolocation.getCurrentPosition(
             async posicion => {
                 const lat = posicion.coords.latitude;
@@ -256,8 +328,8 @@
                 actualizarEstado("Calculando grupo más cercano...");
                 
                 try {
-                    // Llamar a la nueva API /api/nearest
-                    const urlNearest = `${API_BASE_URL}nearest?lat=${lat}&lon=${lon}`;
+                    // AÑADIMOS EL PARÁMETRO 'key' A LA URL
+                    const urlNearest = `${API_BASE_URL}nearest?lat=${lat}&lon=${lon}&key=${userKey}`;
                     const response = await fetch(urlNearest);
                     const data = await response.json();
                     
@@ -268,30 +340,37 @@
                     const grupoCercano = data.nearest_group;
                     const distancia = data.distance_km;
                     
-                    // 1. Mostrar grupo y distancia
-                    actualizarTitulo(grupoCercano, distancia);
-                    // 2. Cargar los horarios del grupo detectado
-                    cargarHorarios(grupoCercano);
+                    // Actualizar el input con el grupo detectado
+                    document.getElementById('groupName').value = grupoCercano;
+                    
+                    // Cargar los horarios del grupo detectado, pasando la distancia
+                    cargarHorarios(grupoCercano, distancia);
 
                 } catch (error) {
-                    actualizarEstado(`ERROR: No se pudo encontrar el grupo. (${error.message})`);
+                    actualizarEstado(`ERROR: No se pudo encontrar el grupo. (${error.message})`, true);
                     resultsContainer.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">Error API: ${error.message}</div>`;
                     console.error("Error al buscar grupo cercano:", error);
+                } finally {
+                    fetchButton.disabled = false;
+                    geoButton.disabled = false;
                 }
             }, 
-            // Manejar errores de geolocalización (permiso denegado, timeout, etc.)
             error => {
-                actualizarEstado("Permiso de Geolocalización denegado o Timeout. Por favor, usa la búsqueda manual.");
-                resultsContainer.innerHTML = `<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 p-4 rounded-lg">Geolocalización denegada. Usa la búsqueda manual.</div>`;
+                const msg = "Permiso de Geolocalización denegado o Timeout. Usa la búsqueda manual.";
+                actualizarEstado(msg, true);
+                resultsContainer.innerHTML = `<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 p-4 rounded-lg">${msg}</div>`;
                 console.error("Error de geolocalización:", error);
+                
+                fetchButton.disabled = false;
+                geoButton.disabled = false;
             },
-            // Opciones: alta precisión, timeout de 5s, no cachear
             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 } 
         );
     }
     
-    // Al cargar la página, limpia el estado y configura el input por si lo quiere usar.
+    // Al cargar la página, limpia el estado y carga la clave si existe.
     window.onload = () => {
+        loadUserKeyStatus();
         document.getElementById('groupName').value = 'CASA';
         actualizarEstado("Listo para consultar. Introduce un grupo o pulsa Buscar Cercano.");
     };
