@@ -2,7 +2,8 @@ import pandas as pd
 import datetime
 import pytz
 import sys
-from flask import Flask, jsonify, request
+import math
+from flask import Flask, jsonify, request # Asegúrate de que request esté importado
 from flask_cors import CORS 
 
 
@@ -10,6 +11,14 @@ from flask_cors import CORS
 RUTA_GTFS = './gtfs_data/'
 ZONA_HORARIA = 'Europe/Madrid' 
 HORA_FORMATO = "%H:%M"
+
+# 🛑 AÑADE ESTE DICCIONARIO GLOBAL
+# Define las coordenadas de referencia para cada grupo de paradas.
+# SUSTITUYE con las coordenadas reales de los puntos centrales de tus grupos.
+GRUPO_COORDENADAS = {
+    "CASA": (41.53904, 2.11787),     # Ejemplo: Latitud y Longitud de tu casa
+    "CASA_MARIA": (41.57131, 2.08258)  # Ejemplo: Latitud y Longitud de tu trabajo
+}
 
 # 🛑 NUEVO: DICCIONARIO DE GRUPOS DE PARADAS
 GRUPOS_PARADAS = {
@@ -38,6 +47,17 @@ GRUPOS_PARADAS = {
 
 # 🛑 La clave 'DEFAULT' es el grupo que se usará si no se especifica ninguno
 GRUPO_DEFAULT = "CASA"
+
+# Nueva función para calcular la distancia (Fórmula Haversine para geolocalización)
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371  # Radio de la Tierra en kilómetros
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    distance = R * c
+    return distance
 
 app = Flask(__name__)
 CORS(app)  # 2. Habilitar CORS para TODA la aplicación
@@ -261,6 +281,30 @@ def main_predictor(group_name=GRUPO_DEFAULT):
 # ===================================================
 # RUTA WEB PARA SERVIR LA API (LA FUNCIÓN QUE DEBE LLEVAR EL DECORADOR)
 # ===================================================
+
+# 🛑 NUEVA RUTA: Determinar el grupo más cercano 🛑
+@app.route('/api/nearest', methods=['GET'])
+def get_nearest_group():
+    # 1. Obtener coordenadas del usuario desde la URL
+    user_lat = request.args.get('lat', type=float)
+    user_lon = request.args.get('lon', type=float)
+
+    if user_lat is None or user_lon is None:
+        return jsonify({"error": "Faltan parámetros 'lat' o 'lon'"}), 400
+
+    min_distance = float('inf')
+    nearest_group_name = None
+
+    # 2. Iterar sobre todos los grupos y calcular la distancia
+    for group_name, (group_lat, group_lon) in GRUPO_COORDENADAS.items():
+        distance = haversine(user_lat, user_lon, group_lat, group_lon)
+
+        if distance < min_distance:
+            min_distance = distance
+            nearest_group_name = group_name
+
+    # 3. Devolver el nombre del grupo más cercano
+    return jsonify({"nearest_group": nearest_group_name, "distance_km": round(min_distance, 2)})
 
 @app.route('/api/bus/<string:grupo>', methods=['GET'])
 def get_bus_schedule(grupo):

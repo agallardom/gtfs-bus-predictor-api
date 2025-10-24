@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor de Buses GTFS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilo base para el cuerpo y la fuente */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        /* Estilos específicos para la estética */
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .bus-line {
+            background-color: #3b82f6; /* Tailwind blue-500 */
+        }
+        .bus-time {
+            background-color: #10b981; /* Tailwind emerald-500 */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-2xl">
+    <h1 id="horarios-titulo" class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">
+        🚌 Próximos Horarios de Transporte
+    </h1>
+
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+        <input type="hidden" id="apiUrlBase" value="https://gtfs-bus-predictor-api.onrender.com/api/"> 
+        
+        <input 
+            type="text" 
+            id="groupName" 
+            value="CASA" 
+            placeholder="Introduce el nombre del grupo (ej: CASA)"
+            class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+        />
+        <button 
+            onclick="cargarHorarios(document.getElementById('groupName').value.trim())"
+            id="fetchButton"
+            class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150 shadow-md"
+        >
+            Consultar Grupo
+        </button>
+
+        <button 
+            onclick="iniciarCargaDinamica()"
+            id="geoButton"
+            class="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-150 shadow-md"
+        >
+            📍 Buscar Cercano
+        </button>
+    </div>
+
+    <p id="statusMessage" class="text-sm text-red-500 mb-4"></p>
+
+    <div id="resultsContainer" class="space-y-6">
+        <p class="text-gray-500 text-center p-4">Introduce un grupo o usa la Geolocalización.</p>
+    </div>
+
+    <p style="text-align: right; font-size: 0.8em; margin-top: 15px;">
+        Última actualización: <span id="last-updated">--:--:--</span>
+    </p>
+</div>
+ <script>
+    // =======================================================================
+    // VARIABLES GLOBALES Y UTILIDADES
+    // =======================================================================
+    const API_BASE_URL = document.getElementById('apiUrlBase').value;
+    // No hay grupo por defecto; el usuario debe elegir manual o geo.
+    
+    // Función auxiliar para formatear los minutos restantes
+    function formatMinutes(minutes) {
+        if (minutes === 'N/A') return 'N/A';
+        if (minutes === 0) return 'Ahora mismo';
+        return `en ${minutes} min`;
+    }
+
+    function actualizarEstado(texto) {
+        document.getElementById('statusMessage').textContent = texto;
+    }
+
+    function actualizarTitulo(grupo, distancia = null) {
+        let texto = `🚌 Horarios de ${grupo}`;
+        if (distancia !== null) {
+             texto += ` (A ${distancia} km)`;
+        }
+        document.getElementById('horarios-titulo').innerHTML = texto;
+    }
+
+    function actualizarTiempo() {
+        document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+    }
+
+
+    // =======================================================================
+    // RENDERIZADO
+    // =======================================================================
+
+    function renderResults(data) {
+        const container = document.getElementById('resultsContainer');
+        container.innerHTML = ''; 
+        
+        for (const stopId in data) {
+            const stopData = data[stopId];
+            
+            // ... [Tu lógica de tarjeta de error (omito aquí para brevedad)] ...
+            if (stopData.error) {
+                const errorCard = `<div class="card bg-yellow-100 p-4 rounded-lg border border-yellow-400"><h3 class="text-xl font-semibold text-yellow-700">🛑 Parada: ${stopId}</h3><p class="text-yellow-600 mt-2">Error: ${stopData.error}</p></div>`;
+                container.innerHTML += errorCard;
+                continue;
+            }
+
+
+            let busItemsHTML = '';
+            const horarios = stopData.horarios_ordenados || [];
+
+            if (horarios.length === 0) {
+                 busItemsHTML = `<p class="text-gray-500 italic p-3">No hay autobuses programados para el resto del día o fin de semana.</p>`;
+            } else {
+                busItemsHTML = horarios.map((bus, index) => {
+                    const isSoon = bus.minutos_restantes !== 'N/A' && bus.minutos_restantes < 10;
+                    const bgColor = isSoon ? 'bg-red-500' : 'bg-green-600';
+
+                    return `
+                        <li class="flex justify-between items-center py-2 px-3 border-b last:border-b-0 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+                            <div class="flex items-center space-x-3 w-1/3">
+                                <span class="font-bold text-lg ${bgColor} text-white px-2 py-1 rounded-full min-w-[3rem] text-center">
+                                    ${bus.linea}
+                                </span>
+                                <span class="text-gray-700 font-medium truncate" title="${bus.destino}">
+                                    ${bus.destino}
+                                </span>
+                            </div>
+                            <div class="flex-grow text-right font-mono text-gray-800 w-1/3">
+                                ${bus.proximo_bus}
+                            </div>
+                            <div class="text-right w-1/3">
+                                <span class="font-extrabold ${isSoon ? 'text-red-600' : 'text-green-700'} text-lg">
+                                    ${formatMinutes(bus.minutos_restantes)}
+                                </span>
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+            }
+
+            const cardHTML = `
+                <div class="card bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <header class="bg-gray-800 text-white p-4">
+                        <h2 class="text-xl font-extrabold">📍 ${stopData.nombre_parada}</h2>
+                        <p class="text-sm text-gray-400">ID: ${stopId}</p>
+                    </header>
+                    <ul class="divide-y divide-gray-200 p-0 m-0">
+                        <li class="flex justify-between items-center py-2 px-3 bg-gray-200 text-sm font-semibold text-gray-600">
+                            <span class="w-1/3">Línea/Destino</span>
+                            <span class="flex-grow text-right w-1/3">Próx. Hora</span>
+                            <span class="text-right w-1/3">Tiempo Restante</span>
+                        </li>
+                        ${busItemsHTML}
+                    </ul>
+                </div>
+            `;
+            container.innerHTML += cardHTML;
+        }
+    }
+
+
+    // =======================================================================
+    // FUNCIONES DE LLAMADA A LA API
+    // =======================================================================
+
+    /**
+     * Llama a la API principal para obtener los horarios del grupo especificado.
+     * Se usa para la búsqueda manual y para el ciclo de actualización.
+     * @param {string} groupName - Nombre del grupo de paradas (ej. 'CASA').
+     */
+    async function cargarHorarios(groupName) {
+        const fetchButton = document.getElementById('fetchButton');
+        const geoButton = document.getElementById('geoButton');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        if (!groupName) {
+            actualizarEstado("Por favor, introduce un nombre de grupo.");
+            return;
+        }
+        
+        actualizarEstado(`Consultando horarios para ${groupName}...`);
+        
+        // Deshabilitar botones
+        fetchButton.disabled = true;
+        geoButton.disabled = true;
+        
+        try {
+            const url = API_BASE_URL + 'bus/' + groupName;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (!response.ok) {
+                const errorMessage = data.error || response.statusText;
+                throw new Error(errorMessage);
+            }
+            
+            actualizarTitulo(groupName); // Actualizar solo el título sin distancia
+            actualizarEstado(`Consulta exitosa para el grupo '${groupName}'.`);
+            renderResults(data);
+            actualizarTiempo();
+
+        } catch (error) {
+            actualizarEstado(`⚠️ Error al consultar: ${error.message}.`);
+            resultsContainer.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">Error: ${error.message}</div>`;
+            console.error('Fetch Error:', error);
+        } finally {
+            fetchButton.disabled = false;
+            geoButton.disabled = false;
+        }
+    }
+
+
+    /**
+     * Función que usa la geolocalización para determinar qué grupo cargar.
+     */
+    function iniciarCargaDinamica() {
+        const fetchButton = document.getElementById('fetchButton');
+        const geoButton = document.getElementById('geoButton');
+        const resultsContainer = document.getElementById('resultsContainer');
+        
+        actualizarEstado("Buscando permiso de Geolocalización...");
+        resultsContainer.innerHTML = `<div class="text-center text-gray-600 p-8">Esperando la ubicación...</div>`;
+
+        if (!navigator.geolocation) {
+            actualizarEstado("ERROR: Geolocalización no soportada.");
+            resultsContainer.innerHTML = `<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 p-4 rounded-lg">Tu dispositivo no soporta geolocalización. Usa la búsqueda manual.</div>`;
+            return;
+        }
+        
+        // Deshabilitar botones mientras se busca la ubicación
+        fetchButton.disabled = true;
+        geoButton.disabled = true;
+
+        // Obtener la ubicación del usuario
+        navigator.geolocation.getCurrentPosition(
+            async posicion => {
+                const lat = posicion.coords.latitude;
+                const lon = posicion.coords.longitude;
+                
+                actualizarEstado("Calculando grupo más cercano...");
+                
+                try {
+                    // Llamar a la nueva API /api/nearest
+                    const urlNearest = `${API_BASE_URL}nearest?lat=${lat}&lon=${lon}`;
+                    const response = await fetch(urlNearest);
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                         throw new Error(data.error || response.statusText);
+                    }
+                    
+                    const grupoCercano = data.nearest_group;
+                    const distancia = data.distance_km;
+                    
+                    // 1. Mostrar grupo y distancia
+                    actualizarTitulo(grupoCercano, distancia);
+                    // 2. Cargar los horarios del grupo detectado
+                    cargarHorarios(grupoCercano);
+
+                } catch (error) {
+                    actualizarEstado(`ERROR: No se pudo encontrar el grupo. (${error.message})`);
+                    resultsContainer.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg">Error API: ${error.message}</div>`;
+                    console.error("Error al buscar grupo cercano:", error);
+                }
+            }, 
+            // Manejar errores de geolocalización (permiso denegado, timeout, etc.)
+            error => {
+                actualizarEstado("Permiso de Geolocalización denegado o Timeout. Por favor, usa la búsqueda manual.");
+                resultsContainer.innerHTML = `<div class="bg-yellow-100 border border-yellow-400 text-yellow-700 p-4 rounded-lg">Geolocalización denegada. Usa la búsqueda manual.</div>`;
+                console.error("Error de geolocalización:", error);
+            },
+            // Opciones: alta precisión, timeout de 5s, no cachear
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 } 
+        );
+    }
+    
+    // Al cargar la página, limpia el estado y configura el input por si lo quiere usar.
+    window.onload = () => {
+        document.getElementById('groupName').value = 'CASA';
+        actualizarEstado("Listo para consultar. Introduce un grupo o pulsa Buscar Cercano.");
+    };
+
+</script>
+</body> 
+</html>
