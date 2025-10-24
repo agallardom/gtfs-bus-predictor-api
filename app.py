@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 import datetime
 import pytz
@@ -70,7 +71,7 @@ def load_gtfs_data():
 
     print("Cargando y pre-procesando datos GTFS...")
     try:
-        stops_df = pd.read_csv(RUTA_GTFS + 'stops.txt', usecols=['stop_id', 'stop_name'])
+        stops_df = pd.read_csv(RUTA_GTFS + 'stops.txt', usecols=['stop_id', 'stop_name', 'stop_lat', 'stop_lon']) # Añadida lat/lon para la ruta /api/nearest
         stop_times_df = pd.read_csv(RUTA_GTFS + 'stop_times.txt', usecols=['trip_id', 'departure_time', 'stop_id'])
         trips_df = pd.read_csv(RUTA_GTFS + 'trips.txt', usecols=['trip_id', 'service_id', 'trip_headsign', 'route_id'])
         calendar_df = pd.read_csv(RUTA_GTFS + 'calendar.txt')
@@ -146,6 +147,8 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
             try:
                 hora_salida = datetime.datetime.strptime(proximo_hora_str, '%H:%M').time()
             except ValueError:
+                # Esto maneja el formato GTFS donde la hora puede ser > 23:59
+                # Aquí podrías necesitar lógica más robusta si se usa hora > 24
                 continue 
 
             dt_proximo = ahora.replace(hour=hora_salida.hour, minute=hora_salida.minute, second=0, microsecond=0)
@@ -252,16 +255,18 @@ def run_once_setup():
     global initial_setup_done
     
     if not initial_setup_done:
-        print("Ejecutando configuración inicial...")
-        # Llama a la función que tenías antes en before_first_request
-        # Por ejemplo: init_data() 
+        print("Ejecutando configuración inicial (Carga GTFS)...")
+        # Llama a la función que REALMENTE quieres ejecutar una vez:
+        load_gtfs_data() 
         
         initial_setup_done = True
         
-@app.before_first_request
-def initial_load():
-    """Carga los datos GTFS en memoria al inicio de la aplicación."""
-    load_gtfs_data()
+# 🛑 ELIMINADA: @app.before_first_request ha sido ELIMINADA aquí
+#
+# @app.before_first_request
+# def initial_load():
+#     """Carga los datos GTFS en memoria al inicio de la aplicación."""
+#     load_gtfs_data()
 
 
 @app.route('/api/nearest', methods=['GET'])
