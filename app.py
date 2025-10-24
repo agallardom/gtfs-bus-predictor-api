@@ -244,7 +244,20 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
 # =======================================================================
 # RUTAS DE LA API (MODIFICADAS PARA USAR 'user_key')
 # =======================================================================
+initial_setup_done = False
 
+@app.before_request
+def run_once_setup():
+    """Ejecuta código de configuración solo una vez."""
+    global initial_setup_done
+    
+    if not initial_setup_done:
+        print("Ejecutando configuración inicial...")
+        # Llama a la función que tenías antes en before_first_request
+        # Por ejemplo: init_data() 
+        
+        initial_setup_done = True
+        
 @app.before_first_request
 def initial_load():
     """Carga los datos GTFS en memoria al inicio de la aplicación."""
