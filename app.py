@@ -2,8 +2,11 @@ import pandas as pd
 import datetime
 import pytz
 import sys
-import math
-from flask import Flask, jsonify, request # Asegúrate de que request esté importado
+import math # Necesario para la función haversine
+import os   # Necesario para leer variables de entorno (la URL remota)
+import json # Necesario para procesar el JSON
+import requests # Necesario para descargar el JSON remoto
+from flask import Flask, jsonify, request # Necesario para crear la API
 from flask_cors import CORS 
 
 
@@ -48,6 +51,20 @@ GRUPOS_PARADAS = {
 # 🛑 La clave 'DEFAULT' es el grupo que se usará si no se especifica ninguno
 GRUPO_DEFAULT = "CASA"
 
+# =======================================================================
+# CONFIGURACIÓN DE URL REMOTA
+# =======================================================================
+
+# La API lee la URL remota de una Variable de Entorno de Render.
+REMOTE_CONFIG_URL = os.environ.get(
+    "USER_GROUPS_JSON_URL", 
+    "https://angelgallardo.com.es/bus_predictor/config.json" # URL por defecto si no está en Render
+)
+
+# =======================================================================
+# FUNCIONES DE UTILIDAD
+# =======================================================================
+
 # Nueva función para calcular la distancia (Fórmula Haversine para geolocalización)
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371  # Radio de la Tierra en kilómetros
@@ -58,6 +75,19 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     distance = R * c
     return distance
+
+def fetch_remote_user_groups():
+    """Descarga el JSON de configuración desde la URL remota."""
+    try:
+        response = requests.get(REMOTE_CONFIG_URL, timeout=10)
+        response.raise_for_status() # Lanza un error HTTP si la descarga falla
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"❌ ERROR al descargar la configuración remota desde {REMOTE_CONFIG_URL}: {e}")
+        return None 
+    except Exception as e:
+        print(f"❌ ERROR inesperado al procesar JSON remoto: {e}")
+        return None
 
 app = Flask(__name__)
 CORS(app)  # 2. Habilitar CORS para TODA la aplicación
