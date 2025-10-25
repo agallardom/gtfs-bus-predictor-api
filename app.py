@@ -5,6 +5,8 @@ import math
 import os
 import json
 import requests
+# ¡CRÍTICO! Necesario para el cálculo de horarios GTFS > 23:59
+from datetime import timedelta 
 from flask import Flask, jsonify, request
 from flask_cors import CORS 
 
