@@ -1,12 +1,16 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
-import datetime
+import datetime # Importa el módulo completo
 import pytz
 import math
 import os
 import json
 import requests
+import re # <--- NUEVA IMPORTACIÓN PARA MANEJAR STRINGS CON PREFIJOS
 from flask import Flask, jsonify, request
 from flask_cors import CORS 
+from functools import wraps
+from datetime import timedelta 
 
 # =======================================================================
 # CONFIGURACIÓN Y CONSTANTES
@@ -24,14 +28,13 @@ REMOTE_CONFIG_URL = os.environ.get(
 )
 
 app = Flask(__name__)
-CORS(app)
+CORS(app) # CORS está habilitado correctamente
 
 # Variables globales para almacenar los datos GTFS cargados una sola vez
-# Esto evita recargar los archivos .txt en cada petición.
 GTFS_DATA = None 
 
 # =======================================================================
-# FUNCIONES DE UTILIDAD PARA CONFIGURACIÓN REMOTA
+# FUNCIONES DE UTILIDAD PARA CONFIGURACIÓN REMOTA Y GPS
 # =======================================================================
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -45,21 +48,70 @@ def haversine(lat1, lon1, lat2, lon2):
     distance = R * c
     return distance
 
-def fetch_remote_user_groups():
-    """Descarga el JSON de configuración de TODOS los usuarios desde la URL remota."""
+
+def _load_remote_config(url):
+    """
+    Carga la configuración de usuario y grupos desde la URL remota.
+    La carga siempre es directa, sin caché.
+    """
+    
+    # Cargar la configuración remotamente
+    print(f"Descargando configuración remota de: {url}")
     try:
-        response = requests.get(REMOTE_CONFIG_URL, timeout=10)
-        response.raise_for_status()
-        return response.json()
+        response = requests.get(url, timeout=10)
+        response.raise_for_status() # Lanza excepción para códigos de error HTTP
+        config_data = response.json()
+        
+        print("Configuración remota cargada exitosamente (sin caché).")
+        return config_data
+
     except requests.exceptions.RequestException as e:
-        print(f"❌ ERROR al descargar la configuración remota: {e}")
-        return None 
+        print(f"ERROR: No se pudo cargar la configuración remota. {e}")
+        # Si no hay caché y falla, lanzar error
+        raise ConnectionError(f"ERROR CRÍTICO: No se pudo acceder a la configuración remota. Verificar URL o conexión.")
+
+
+def _get_user_config(key):
+    """
+    Obtiene la configuración específica para la clave de usuario proporcionada.
+    """
+    try:
+        # Aquí se llama a la función sin caché
+        config = _load_remote_config(REMOTE_CONFIG_URL) 
+        if key not in config:
+            raise KeyError(f"Clave de usuario '{key}' no encontrada en el JSON remoto.")
+        return config[key]
+    except (ConnectionError, KeyError) as e:
+        # Re-lanza la excepción para que el decorador la capture y devuelva 400 o 500
+        raise e
     except Exception as e:
-        print(f"❌ ERROR inesperado al procesar JSON remoto: {e}")
-        return None
+        raise Exception(f"Error inesperado al procesar la configuración: {e}")
+
+def _load_config_and_handle_errors(f):
+    """
+    Decorador para cargar la configuración y manejar errores comunes de la API.
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_key = request.args.get('user_key') 
+        if not user_key:
+            return jsonify({"error": "Parámetro 'user_key' es obligatorio."}), 400
+
+        try:
+            user_config = _get_user_config(user_key)
+            return f(user_config=user_config, *args, **kwargs)
+        except KeyError as e:
+            return jsonify({"error": str(e)}), 400
+        except ConnectionError as e:
+            return jsonify({"error": f"Error de conexión: {str(e)}"}), 503
+        except Exception as e:
+            print(f"Error inesperado: {e}")
+            return jsonify({"error": "Error interno del servidor."}), 500
+    return decorated_function
+
 
 # =======================================================================
-# 🛑 NUEVA FUNCIÓN: CARGA ÚNICA DE DATOS GTFS 🛑
+# CARGA ÚNICA DE DATOS GTFS 
 # =======================================================================
 
 def load_gtfs_data():
@@ -70,7 +122,8 @@ def load_gtfs_data():
 
     print("Cargando y pre-procesando datos GTFS...")
     try:
-        stops_df = pd.read_csv(RUTA_GTFS + 'stops.txt', usecols=['stop_id', 'stop_name', 'stop_lat', 'stop_lon']) # Añadida lat/lon para la ruta /api/nearest
+        # NOTA: Asegúrate de que los archivos estén disponibles en la ruta './gtfs_data/'
+        stops_df = pd.read_csv(RUTA_GTFS + 'stops.txt', usecols=['stop_id', 'stop_name', 'stop_lat', 'stop_lon']) 
         stop_times_df = pd.read_csv(RUTA_GTFS + 'stop_times.txt', usecols=['trip_id', 'departure_time', 'stop_id'])
         trips_df = pd.read_csv(RUTA_GTFS + 'trips.txt', usecols=['trip_id', 'service_id', 'trip_headsign', 'route_id'])
         calendar_df = pd.read_csv(RUTA_GTFS + 'calendar.txt')
@@ -79,7 +132,6 @@ def load_gtfs_data():
         
     except FileNotFoundError as e:
         print(f"ERROR: No se encontró un archivo GTFS: {e}")
-        # En producción, esto debería abortar el servicio
         return None 
     
     GTFS_DATA = {
@@ -94,13 +146,11 @@ def load_gtfs_data():
     return GTFS_DATA
 
 # =======================================================================
-# LÓGICA EXISTENTE DE CÁLCULO DE HORARIOS (REFACTORIZADA)
+# LÓGICA DE CÁLCULO DE HORARIOS GTFS
 # =======================================================================
 
-# Mantenemos las funciones auxiliares exactamente como estaban
 def obtener_lineas_id_parada(parada_id, df_horarios_base, routes_df):
     """Identifica y lista todos los IDs, nombres cortos y destinos de las líneas que pasan."""
-    # ... Tu lógica se mantiene intacta ...
     df_parada = df_horarios_base[df_horarios_base['stop_id'] == parada_id]
     rutas_por_destino = df_parada.groupby(['route_id', 'trip_headsign'])['trip_id'].count().reset_index()
     rutas_con_nombre = pd.merge(
@@ -117,7 +167,6 @@ def obtener_lineas_id_parada(parada_id, df_horarios_base, routes_df):
 
 def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_df, ahora, tiempo_actual_str):
     """Calcula los próximos horarios para una única parada, línea por línea."""
-    # ... Tu lógica se mantiene intacta ...
     lineas_con_destino = obtener_lineas_id_parada(parada_id, df_horarios_base, routes_df) 
     df_horarios_parada = df_horarios_base[df_horarios_base['stop_id'] == parada_id]
     resultados_por_linea = []
@@ -135,26 +184,43 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
             'linea': route_short_name,
             'proximo_bus': 'N/A',
             'siguiente_bus': 'N/A',
-            'destino': 'N/A',
+            'destino': trip_headsign, # Usar el destino real si se encuentra
             'minutos_restantes': 'N/A'
         }
 
         if not proximos_horarios.empty:
             proximo_hora_str = proximos_horarios['departure_time'].iloc[0][:5] 
-            proximo_destino = proximos_horarios['trip_headsign'].iloc[0] 
             
             try:
+                # Usamos datetime.datetime ya que importamos el módulo 'datetime'
                 hora_salida = datetime.datetime.strptime(proximo_hora_str, '%H:%M').time()
             except ValueError:
-                # Esto maneja el formato GTFS donde la hora puede ser > 23:59
-                # Aquí podrías necesitar lógica más robusta si se usa hora > 24
-                continue 
+                # Manejar horas GTFS > 23:59 (como "24:05:00")
+                time_parts = [int(p) for p in proximos_horarios['departure_time'].iloc[0].split(':')]
+                horas_gtfs = time_parts[0]
+                minutos_gtfs = time_parts[1]
+                
+                # Usamos datetime.datetime para la clase
+                ahora_comparacion = datetime.datetime.now(pytz.timezone(ZONA_HORARIA)).replace(hour=ahora.hour, minute=ahora.minute, second=0, microsecond=0)
+                
+                dt_proximo = ahora.replace(hour=horas_gtfs % 24, minute=minutos_gtfs, second=0, microsecond=0)
+                if horas_gtfs >= 24:
+                    dt_proximo += timedelta(days=horas_gtfs // 24)
 
-            dt_proximo = ahora.replace(hour=hora_salida.hour, minute=hora_salida.minute, second=0, microsecond=0)
-            if dt_proximo < ahora:
-                dt_proximo += datetime.timedelta(days=1)
-            delta = dt_proximo - ahora
-            minutos_restantes = int(delta.total_seconds() // 60)
+                if dt_proximo < ahora_comparacion:
+                    # Si la hora calculada es anterior, asumimos que es al día siguiente
+                    dt_proximo += timedelta(days=1)
+                
+                delta = dt_proximo - ahora_comparacion
+                minutos_restantes = int(delta.total_seconds() // 60)
+            else:
+                # Usamos datetime.datetime para la clase
+                dt_proximo = ahora.replace(hour=hora_salida.hour, minute=hora_salida.minute, second=0, microsecond=0)
+                if dt_proximo < ahora:
+                    dt_proximo += timedelta(days=1)
+                delta = dt_proximo - ahora
+                minutos_restantes = int(delta.total_seconds() // 60)
+
             
             siguiente_hora_str = "N/A"
             if len(proximos_horarios) > 1:
@@ -163,7 +229,6 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
             resultado_linea.update({
                 'proximo_bus': proximo_hora_str,
                 'siguiente_bus': siguiente_hora_str,
-                'destino': trip_headsign, 
                 'minutos_restantes': minutos_restantes
             })
         
@@ -174,7 +239,6 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
 
 def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
     """
-    Función que sustituye la lógica central de main_predictor.
     Procesa los horarios para la lista de IDs de parada proporcionada.
     """
     stops_df = gtfs_data['stops']
@@ -186,7 +250,8 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
 
     # 1. Definir la hora actual y servicio
     tz = pytz.timezone(ZONA_HORARIA)
-    ahora = datetime.datetime.now(tz)
+    # Usamos datetime.datetime.now(tz)
+    ahora = datetime.datetime.now(tz) 
     tiempo_actual_str = ahora.strftime('%H:%M:%S') 
     fecha_hoy_gtfs = int(ahora.strftime('%Y%m%d'))
     
@@ -211,12 +276,36 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
     # 3. Iniciar el procesamiento de múltiples paradas
     resultados_totales = {}
     
-    for parada_id in paradas_a_procesar:
+    for parada_id_raw in paradas_a_procesar:
         
+        parada_id_str = str(parada_id_raw).strip()
+
+        # Lógica de conversión robusta para IDs como 'TUS_14165' (la corrección)
         try:
+            # 1. Intenta convertir directamente a entero (para IDs puros)
+            parada_id = int(parada_id_str)
+        except ValueError:
+            # 2. Si falla (contiene letras/guiones), extrae solo los dígitos
+            numeric_part = re.sub(r'\D', '', parada_id_str)
+            
+            if numeric_part:
+                try:
+                    parada_id = int(numeric_part)
+                except ValueError:
+                    # Caso de fallo extremo
+                    resultados_totales[parada_id_str] = {'error': f"ID '{parada_id_str}' no tiene un componente numérico válido."}
+                    continue
+            else:
+                # Caso donde el ID es puramente no numérico (ej: 'TUS')
+                resultados_totales[parada_id_str] = {'error': f"ID '{parada_id_str}' es puramente no numérico."}
+                continue
+            
+        try:
+            # Ahora parada_id es el ID numérico que se busca en stops.txt
             nombre_parada = stops_df.loc[stops_df['stop_id'] == parada_id, 'stop_name'].iloc[0]
         except IndexError:
-            resultados_totales[parada_id] = {'error': f"ID {parada_id} no encontrado en stops.txt."}
+            # Usamos el ID numérico convertido aquí, pero mostramos el original en el error si es un fallo
+            resultados_totales[parada_id_raw] = {'error': f"ID numérico {parada_id} (derivado de '{parada_id_raw}') no encontrado en stops.txt."}
             continue
             
         resultados_parada = calcular_proximos_buses(
@@ -228,7 +317,7 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
             tiempo_actual_str
         )
         
-        # Lógica de ordenamiento por tiempo (se mantiene)
+        # Lógica de ordenamiento por tiempo
         horarios_validos = [
             res for res in resultados_parada['horarios'] 
             if res['minutos_restantes'] != 'N/A'
@@ -237,62 +326,59 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
             horarios_validos, 
             key=lambda x: x['minutos_restantes']
         )
-        resultados_parada['horarios_ordenados'] = horarios_ordenados
-        resultados_totales[parada_id] = resultados_parada
+        
+        # Usamos el ID original (raw) como clave en el diccionario de salida
+        resultados_totales[str(parada_id_raw)] = { 
+            "nombre_parada": nombre_parada,
+            "stop_id": str(parada_id_raw),
+            "horarios_ordenados": horarios_ordenados
+        }
         
     return resultados_totales
 
 
 # =======================================================================
-# RUTAS DE LA API (MODIFICADAS PARA USAR 'user_key')
+# RUTAS DE LA API (ACTUALIZADAS PARA USAR EL DECORADOR)
 # =======================================================================
 initial_setup_done = False
 
 @app.before_request
 def run_once_setup():
-    """Ejecuta código de configuración solo una vez."""
+    """Ejecuta código de configuración solo una vez (Carga GTFS)."""
     global initial_setup_done
     
     if not initial_setup_done:
         print("Ejecutando configuración inicial (Carga GTFS)...")
-        # Llama a la función que REALMENTE quieres ejecutar una vez:
         load_gtfs_data() 
-        
         initial_setup_done = True
         
-# 🛑 ELIMINADA: @app.before_first_request ha sido ELIMINADA aquí
-#
-# @app.before_first_request
-# def initial_load():
-#     """Carga los datos GTFS en memoria al inicio de la aplicación."""
-#     load_gtfs_data()
+# Endpoint: /api/config
+@app.route('/api/config', methods=['GET'])
+@_load_config_and_handle_errors
+def get_config(user_config):
+    """
+    Devuelve la configuración completa del usuario (grupos y paradas).
+    """
+    return jsonify(user_config)
 
 
+# Endpoint: /api/nearest
 @app.route('/api/nearest', methods=['GET'])
-def get_nearest_group():
+@_load_config_and_handle_errors
+def get_nearest_group(user_config):
     """Ruta para determinar el grupo más cercano, usando la configuración del usuario."""
-    user_key = request.args.get('key') 
     user_lat = request.args.get('lat', type=float)
     user_lon = request.args.get('lon', type=float)
 
-    if not user_key or user_lat is None or user_lon is None:
-        return jsonify({"error": "Faltan parámetros 'key', 'lat' o 'lon'."}), 400
-
-    user_groups_db = fetch_remote_user_groups()
-    if user_groups_db is None:
-        return jsonify({"error": "No se pudo cargar la base de datos de grupos remota."}), 500
-
-    user_config = user_groups_db.get(user_key)
-    if not user_config:
-        return jsonify({"error": f"Clave de usuario '{user_key}' no encontrada en el JSON remoto."}), 404
+    if user_lat is None or user_lon is None:
+        return jsonify({"error": "Parámetros 'lat' o 'lon' son obligatorios y deben ser números."}), 400
 
     min_distance = float('inf')
     nearest_group_name = None
 
-    # Iterar sobre la configuración anidada del usuario
+    # Iterar sobre la configuración anidada del usuario (obtenida por el decorador)
     for group_name, config_data in user_config.items():
         try:
-            # Extraer las coordenadas del diccionario anidado
             coords_str = config_data.get('coords')
             if not coords_str: continue 
             
@@ -310,42 +396,30 @@ def get_nearest_group():
     if nearest_group_name:
         return jsonify({"nearest_group": nearest_group_name, "distance_km": round(min_distance, 2)})
     else:
-        return jsonify({"error": "No se encontraron grupos válidos para calcular la distancia."}), 500
+        return jsonify({"message": "No se encontraron grupos válidos con coordenadas en la configuración del usuario."}), 200
 
 
+# Endpoint: /api/bus/<string:group_name>
 @app.route('/api/bus/<string:group_name>', methods=['GET'])
-def get_bus_schedule(group_name):
+@_load_config_and_handle_errors
+def get_bus_schedule(user_config, group_name):
     """Ruta para obtener horarios de un grupo específico, usando la configuración del usuario."""
     
-    user_key = request.args.get('key') 
-    
-    if not user_key:
-        return jsonify({"error": "Falta el parámetro 'key' para identificar al usuario."}), 400
-
     if GTFS_DATA is None:
          return jsonify({"error": "Datos GTFS no cargados. Inténtalo de nuevo."}), 500
-
-    user_groups_db = fetch_remote_user_groups()
-    if user_groups_db is None:
-        return jsonify({"error": "No se pudo cargar la base de datos de grupos remota."}), 500
-        
-    user_config = user_groups_db.get(user_key)
-    if not user_config:
-        return jsonify({"error": f"Clave de usuario '{user_key}' no encontrada."}), 404
 
     # 1. Obtener la lista de paradas ('stops') del grupo específico del usuario
     group_data = user_config.get(group_name)
     if not group_data:
-        return jsonify({"error": f"El grupo '{group_name}' no existe para el usuario '{user_key}'."}), 404
+        return jsonify({"error": f"El grupo '{group_name}' no existe para el usuario con esa clave."}), 404
 
     paradas_a_procesar = group_data.get('stops', []) 
     
     if not paradas_a_procesar:
         return jsonify({"error": f"El grupo '{group_name}' no tiene paradas configuradas."}), 400
 
-    # 2. Llamar a la lógica de procesamiento (sustituyendo a main_predictor)
+    # 2. Llamar a la lógica de procesamiento 
     try:
-        # Aquí se usa tu lógica refactorizada y se le pasa la lista de paradas
         resultados = process_schedules_for_stops(paradas_a_procesar, GTFS_DATA)
         
         if isinstance(resultados, str):
@@ -354,6 +428,7 @@ def get_bus_schedule(group_name):
         return jsonify(resultados)
 
     except Exception as e:
+        print(f"Error interno en process_schedules_for_stops: {e}")
         return jsonify({"error": f"Error interno durante el procesamiento de horarios: {str(e)}"}), 500
 
 # =======================================================================
