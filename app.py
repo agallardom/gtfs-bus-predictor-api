@@ -6,10 +6,10 @@ import math
 import os
 import json
 import requests
+import re # <--- NUEVA IMPORTACIÓN PARA MANEJAR STRINGS CON PREFIJOS
 from flask import Flask, jsonify, request
 from flask_cors import CORS 
 from functools import wraps
-# Importamos timedelta explícitamente, pero usamos datetime.datetime para la clase
 from datetime import timedelta 
 
 # =======================================================================
@@ -35,7 +35,6 @@ GTFS_DATA = None
 
 # =======================================================================
 # FUNCIONES DE UTILIDAD PARA CONFIGURACIÓN REMOTA Y GPS
-# (Sin cambios en esta sección)
 # =======================================================================
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -94,7 +93,7 @@ def _load_config_and_handle_errors(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        user_key = request.args.get('user_key') # CAMBIADO de 'key' a 'user_key' para match con el frontend
+        user_key = request.args.get('user_key') 
         if not user_key:
             return jsonify({"error": "Parámetro 'user_key' es obligatorio."}), 400
 
@@ -113,7 +112,6 @@ def _load_config_and_handle_errors(f):
 
 # =======================================================================
 # CARGA ÚNICA DE DATOS GTFS 
-# (Sin cambios en esta sección)
 # =======================================================================
 
 def load_gtfs_data():
@@ -194,7 +192,7 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
             proximo_hora_str = proximos_horarios['departure_time'].iloc[0][:5] 
             
             try:
-                # CORRECCIÓN: Usar datetime.datetime.strptime ya que importamos el módulo 'datetime'
+                # Usamos datetime.datetime ya que importamos el módulo 'datetime'
                 hora_salida = datetime.datetime.strptime(proximo_hora_str, '%H:%M').time()
             except ValueError:
                 # Manejar horas GTFS > 23:59 (como "24:05:00")
@@ -202,7 +200,7 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
                 horas_gtfs = time_parts[0]
                 minutos_gtfs = time_parts[1]
                 
-                # CORRECCIÓN: Usar datetime.datetime para la clase
+                # Usamos datetime.datetime para la clase
                 ahora_comparacion = datetime.datetime.now(pytz.timezone(ZONA_HORARIA)).replace(hour=ahora.hour, minute=ahora.minute, second=0, microsecond=0)
                 
                 dt_proximo = ahora.replace(hour=horas_gtfs % 24, minute=minutos_gtfs, second=0, microsecond=0)
@@ -210,14 +208,13 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
                     dt_proximo += timedelta(days=horas_gtfs // 24)
 
                 if dt_proximo < ahora_comparacion:
-                    # Si la hora calculada es anterior (ej: estamos en la noche del día D y 
-                    # el bus sale a 25:00, pero la hora de 25:00 se calcula como 01:00 del día D)
+                    # Si la hora calculada es anterior, asumimos que es al día siguiente
                     dt_proximo += timedelta(days=1)
                 
                 delta = dt_proximo - ahora_comparacion
                 minutos_restantes = int(delta.total_seconds() // 60)
             else:
-                # CORRECCIÓN: Usar datetime.datetime para la clase
+                # Usamos datetime.datetime para la clase
                 dt_proximo = ahora.replace(hour=hora_salida.hour, minute=hora_salida.minute, second=0, microsecond=0)
                 if dt_proximo < ahora:
                     dt_proximo += timedelta(days=1)
@@ -253,12 +250,12 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
 
     # 1. Definir la hora actual y servicio
     tz = pytz.timezone(ZONA_HORARIA)
-    # CORRECCIÓN: Usar datetime.datetime.now(tz)
+    # Usamos datetime.datetime.now(tz)
     ahora = datetime.datetime.now(tz) 
     tiempo_actual_str = ahora.strftime('%H:%M:%S') 
     fecha_hoy_gtfs = int(ahora.strftime('%Y%m%d'))
     
-    # 2. Lógica de servicio activo (Se mantiene intacta)
+    # 2. Lógica de servicio activo
     dias_semana = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
     dia_hoy_columna = dias_semana[ahora.weekday()]
     
@@ -279,15 +276,36 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
     # 3. Iniciar el procesamiento de múltiples paradas
     resultados_totales = {}
     
-    for parada_id in paradas_a_procesar:
+    for parada_id_raw in paradas_a_procesar:
         
-        # Convertir a int si es necesario
-        parada_id = int(parada_id) 
+        parada_id_str = str(parada_id_raw).strip()
 
+        # Lógica de conversión robusta para IDs como 'TUS_14165' (la corrección)
         try:
+            # 1. Intenta convertir directamente a entero (para IDs puros)
+            parada_id = int(parada_id_str)
+        except ValueError:
+            # 2. Si falla (contiene letras/guiones), extrae solo los dígitos
+            numeric_part = re.sub(r'\D', '', parada_id_str)
+            
+            if numeric_part:
+                try:
+                    parada_id = int(numeric_part)
+                except ValueError:
+                    # Caso de fallo extremo
+                    resultados_totales[parada_id_str] = {'error': f"ID '{parada_id_str}' no tiene un componente numérico válido."}
+                    continue
+            else:
+                # Caso donde el ID es puramente no numérico (ej: 'TUS')
+                resultados_totales[parada_id_str] = {'error': f"ID '{parada_id_str}' es puramente no numérico."}
+                continue
+            
+        try:
+            # Ahora parada_id es el ID numérico que se busca en stops.txt
             nombre_parada = stops_df.loc[stops_df['stop_id'] == parada_id, 'stop_name'].iloc[0]
         except IndexError:
-            resultados_totales[parada_id] = {'error': f"ID {parada_id} no encontrado en stops.txt."}
+            # Usamos el ID numérico convertido aquí, pero mostramos el original en el error si es un fallo
+            resultados_totales[parada_id_raw] = {'error': f"ID numérico {parada_id} (derivado de '{parada_id_raw}') no encontrado en stops.txt."}
             continue
             
         resultados_parada = calcular_proximos_buses(
@@ -309,9 +327,10 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
             key=lambda x: x['minutos_restantes']
         )
         
-        resultados_totales[str(parada_id)] = {
+        # Usamos el ID original (raw) como clave en el diccionario de salida
+        resultados_totales[str(parada_id_raw)] = { 
             "nombre_parada": nombre_parada,
-            "stop_id": str(parada_id),
+            "stop_id": str(parada_id_raw),
             "horarios_ordenados": horarios_ordenados
         }
         
