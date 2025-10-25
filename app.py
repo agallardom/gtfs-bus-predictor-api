@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import datetime
+import datetime # Importa el módulo completo
 import pytz
 import math
 import os
@@ -9,6 +9,8 @@ import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS 
 from functools import wraps
+# Importamos timedelta explícitamente, pero usamos datetime.datetime para la clase
+from datetime import timedelta 
 
 # =======================================================================
 # CONFIGURACIÓN Y CONSTANTES
@@ -25,16 +27,15 @@ REMOTE_CONFIG_URL = os.environ.get(
     "https://angelgallardo.com.es/bus_predictor/config.json" # URL por defecto
 )
 
-# Caching deshabilitado: Las variables CONFIG_CACHE y CACHE_DURATION_MINUTES han sido eliminadas.
-
 app = Flask(__name__)
-CORS(app)
+CORS(app) # CORS está habilitado correctamente
 
 # Variables globales para almacenar los datos GTFS cargados una sola vez
 GTFS_DATA = None 
 
 # =======================================================================
 # FUNCIONES DE UTILIDAD PARA CONFIGURACIÓN REMOTA Y GPS
+# (Sin cambios en esta sección)
 # =======================================================================
 
 def haversine(lat1, lon1, lat2, lon2):
@@ -93,9 +94,9 @@ def _load_config_and_handle_errors(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        user_key = request.args.get('key')
+        user_key = request.args.get('user_key') # CAMBIADO de 'key' a 'user_key' para match con el frontend
         if not user_key:
-            return jsonify({"error": "Parámetro 'key' es obligatorio."}), 400
+            return jsonify({"error": "Parámetro 'user_key' es obligatorio."}), 400
 
         try:
             user_config = _get_user_config(user_key)
@@ -112,6 +113,7 @@ def _load_config_and_handle_errors(f):
 
 # =======================================================================
 # CARGA ÚNICA DE DATOS GTFS 
+# (Sin cambios en esta sección)
 # =======================================================================
 
 def load_gtfs_data():
@@ -192,6 +194,7 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
             proximo_hora_str = proximos_horarios['departure_time'].iloc[0][:5] 
             
             try:
+                # CORRECCIÓN: Usar datetime.datetime.strptime ya que importamos el módulo 'datetime'
                 hora_salida = datetime.datetime.strptime(proximo_hora_str, '%H:%M').time()
             except ValueError:
                 # Manejar horas GTFS > 23:59 (como "24:05:00")
@@ -199,8 +202,8 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
                 horas_gtfs = time_parts[0]
                 minutos_gtfs = time_parts[1]
                 
-                # Crear un objeto datetime para comparar
-                ahora_comparacion = ahora.replace(hour=ahora.hour, minute=ahora.minute, second=0, microsecond=0)
+                # CORRECCIÓN: Usar datetime.datetime para la clase
+                ahora_comparacion = datetime.datetime.now(pytz.timezone(ZONA_HORARIA)).replace(hour=ahora.hour, minute=ahora.minute, second=0, microsecond=0)
                 
                 dt_proximo = ahora.replace(hour=horas_gtfs % 24, minute=minutos_gtfs, second=0, microsecond=0)
                 if horas_gtfs >= 24:
@@ -214,6 +217,7 @@ def calcular_proximos_buses(parada_id, nombre_parada, df_horarios_base, routes_d
                 delta = dt_proximo - ahora_comparacion
                 minutos_restantes = int(delta.total_seconds() // 60)
             else:
+                # CORRECCIÓN: Usar datetime.datetime para la clase
                 dt_proximo = ahora.replace(hour=hora_salida.hour, minute=hora_salida.minute, second=0, microsecond=0)
                 if dt_proximo < ahora:
                     dt_proximo += timedelta(days=1)
@@ -249,7 +253,8 @@ def process_schedules_for_stops(paradas_a_procesar, gtfs_data):
 
     # 1. Definir la hora actual y servicio
     tz = pytz.timezone(ZONA_HORARIA)
-    ahora = datetime.datetime.now(tz)
+    # CORRECCIÓN: Usar datetime.datetime.now(tz)
+    ahora = datetime.datetime.now(tz) 
     tiempo_actual_str = ahora.strftime('%H:%M:%S') 
     fecha_hoy_gtfs = int(ahora.strftime('%Y%m%d'))
     
