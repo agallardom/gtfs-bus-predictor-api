@@ -291,12 +291,26 @@ def run_once_setup():
 
 # Endpoint: /api/config
 @app.route('/api/config', methods=['GET'])
-def get_config(user_config):
-    """
-    Devuelve la configuración completa del usuario (grupos y paradas).
-    """
-    return jsonify(user_config)
+def get_config(): 
+    # ¡CRÍTICO! La firma fue corregida a get_config()
+    """Devuelve la configuración completa del usuario."""
+    user_key = request.args.get('user_key') or request.args.get('key')
+    
+    if not user_key:
+        return jsonify({"error": "Parámetro 'user_key' (o 'key') es obligatorio."}), 400
 
+    try:
+        user_config = _get_user_config(user_key)
+        return jsonify(user_config)
+    except KeyError as e:
+        return jsonify({"error": str(e)}), 400
+    except ConnectionError as e:
+        return jsonify({"error": f"Error de conexión: {str(e)}"}), 503
+    except Exception as e:
+        print(f"Error inesperado: {e}")
+        return jsonify({"error": "Error interno del servidor."}), 500
+    
+    
 @app.route('/api/nearest', methods=['GET'])
 def get_nearest_group():
     """Ruta para determinar el grupo más cercano, usando la configuración del usuario."""
