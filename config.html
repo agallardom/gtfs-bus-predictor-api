@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Gestión de Usuario - Config</title>
+    <!-- Carga de Tailwind CSS para el estilo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define la fuente Inter y estilos básicos */
+        body { font-family: 'Inter', sans-serif; }
+        /* Animación de spin para el loader */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-custom { animation: spin 1s linear infinite; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen p-4 sm:p-8 flex items-center justify-center">
+
+    <!-- Contenedor Principal de la Aplicación -->
+    <div class="w-full max-w-4xl bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 border border-gray-200 dark:border-gray-700">
+        
+        <!-- Encabezado -->
+        <div class="flex items-center mb-6 border-b pb-4 border-gray-100 dark:border-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500 mr-3"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 0-1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 0 1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                Panel de Gestión de Usuario
+            </h1>
+        </div>
+
+        <!-- Sección de Controles y Clave -->
+        <div class="flex flex-col gap-6">
+            
+            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl shadow-md">
+                
+                <div class="w-full sm:w-auto">
+                    <p class="text-lg font-medium text-gray-700 dark:text-gray-200 mb-2 sm:mb-0">
+                        Clave Activa: <span id="userNameDisplay" class="font-extrabold text-indigo-600 dark:text-indigo-300">Cargando...</span>
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <!-- Botón Guardar Clave -->
+                    <button id="saveKeyButton" class="flex items-center justify-center px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition duration-200 w-full sm:w-auto transform hover:scale-[1.02]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Guardar Clave
+                    </button>
+
+                    <!-- Botón Visualizar Configuración -->
+                    <button id="toggleConfigButton" class="flex items-center justify-center px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-200 w-full sm:w-auto transform hover:scale-[1.02]">
+                        <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-2"><path d="M6 9l6 6 6-6"></path></svg>
+                        Visualizar Configuración
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Contenedor de la Configuración (Acordeón) -->
+            <div id="configContainer" class="hidden mt-4 border border-indigo-300 dark:border-indigo-500 rounded-xl p-4 sm:p-6 bg-indigo-50 dark:bg-gray-700/50 transition-all duration-300 ease-in-out">
+                <!-- El contenido de la configuración (Loader, Error o Grupos) se renderizará aquí -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contenedor para mensajes/alertas de la app (Modal) -->
+    <div id="message-box"></div>
+
+    <script>
+        // --------------------------------------------------------------------------
+        // !!! ATENCIÓN: REEMPLAZA ESTA URL CON LA DIRECCIÓN REAL DE TU ENDPOINT !!!
+        // --------------------------------------------------------------------------
+        const CONFIG_API_BASE_URL = 'https://gtfs-bus-predictor-api.onrender.com/api/config?key='; 
+        const MAX_RETRIES = 3;
+        const INITIAL_BACKOFF_MS = 1000; // 1 segundo de espera inicial
+
+        // --- MOCK DE DATOS DEL ENDPOINT /config (SOLO PARA REFERENCIA, NO SE EJECUTA) ---
+        // Este objeto NO se utiliza para cargar datos, solo para mostrar la estructura.
+        const MOCK_API_RESPONSES = {
+            "DEFAULT": { 
+                "CASA": {
+                    "coords": "41.53904, 2.11787",
+                    "stops": ["TUS_14165", "TUS_14166", "TUS_14309", "ROD_78704", "FGC_PJ"]
+                },
+                "CASA_MARIA": {
+                    "coords": "41.57131, 2.08258",
+                    "stops": ["TUS_14360", "TUS_14227", "TUS_16590", "TUS_14300", "TUS_14398", "ROD_78709", "FGC_PN"]
+                }
+            },
+            // ... otros mocks
+        };
+
+        // --- VARIABLES DE ESTADO ---
+        let isConfigVisible = false;
+        let expandedGroupId = null;
+        let configData = null;
+        let isLoading = false;
+        let error = null;
+        let userName = 'Cargando...';
+
+        // --- REFERENCIAS DOM ---
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        const configContainer = document.getElementById('configContainer');
+        const toggleConfigButton = document.getElementById('toggleConfigButton');
+        const saveKeyButton = document.getElementById('saveKeyButton');
+
+        // --- UTILIDADES Y RENDERIZADO (sin cambios en su lógica) ---
+
+        /**
+         * Muestra un modal de alerta personalizado (sustituto de alert()).
+         */
+        function customAlert(message) {
+            const messageBox = document.getElementById('message-box');
+            if (messageBox) {
+                messageBox.innerHTML = `
+                    <div class="fixed inset-0 bg-gray-900 bg-opacity-70 z-50 flex items-center justify-center p-4">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-2xl max-w-sm w-full text-center transform transition-all duration-300 scale-100">
+                            <p class="text-lg font-semibold dark:text-gray-100">${message}</p>
+                            <button onclick="document.getElementById('message-box').innerHTML = ''" class="mt-4 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-150">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Iconos SVG 
+        const loaderIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-indigo-600 animate-spin-custom"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>`;
+        const alertIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-red-600"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+        const userIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-3"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`;
+        const mapPinIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-1"><path d="M12 21.7C17.3 17 21 13.3 21 10A9 9 0 0 0 3 10c0 3.3 3.7 7 9 11.7z"></path><circle cx="12" cy="10" r="3"></circle></svg>`;
+        const mapIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 mr-1"><path d="M3 6l6-3v12M15 15l6-3V3M3 15h18V3H3z"></path></svg>`;
+        const waypointsIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mr-2"><circle cx="12" cy="12" r="10"></circle><line x1="10" y1="12" x2="14" y2="12"></line><line x1="12" y1="10" x2="12" y2="14"></line></svg>`;
+
+        /**
+         * Renderiza el contenido del panel de configuración (loader, error o datos).
+         */
+        function renderConfigContent() {
+            if (!isConfigVisible) {
+                configContainer.classList.add('hidden');
+                return;
+            }
+            
+            configContainer.classList.remove('hidden');
+            let contentHTML = '';
+
+            if (isLoading) {
+                contentHTML = `
+                    <div class="flex flex-col items-center justify-center h-40">
+                        ${loaderIcon}
+                        <p class="mt-3 text-lg font-medium text-indigo-600 dark:text-indigo-400">Cargando Configuración...</p>
+                    </div>
+                `;
+            } else if (error) {
+                 contentHTML = `
+                    <div class="flex flex-col items-center justify-center h-40 p-4 bg-red-100 dark:bg-red-900/50 rounded-lg">
+                        ${alertIcon}
+                        <p class="mt-3 text-lg font-medium text-red-700 dark:text-red-400">Error: ${error}</p>
+                    </div>
+                `;
+            } else if (configData && Object.keys(configData).length > 0) {
+                const groups = [];
+                for (const groupName in configData) {
+                    if (configData.hasOwnProperty(groupName)) {
+                        const groupData = configData[groupName];
+                        groups.push({
+                            name: groupName,
+                            id: groupName,
+                            coords: groupData.coords || 'N/A',
+                            stops: groupData.stops && Array.isArray(groupData.stops) ? groupData.stops.sort() : []
+                        });
+                    }
+                }
+                
+                let groupsHTML = groups.map(group => {
+                    const isExpanded = expandedGroupId === group.id;
+                    const chevronIcon = isExpanded 
+                        ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-indigo-600"><path d="M18 15l-6-6-6 6"></path></svg>`
+                        : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M6 9l6 6 6-6"></path></svg>`;
+                    
+                    const userIconClass = isExpanded ? 'text-indigo-600' : 'text-red-500 dark:text-red-400';
+                    const headerBgClass = isExpanded ? 'bg-indigo-100 dark:bg-indigo-900/50' : 'hover:bg-gray-50 dark:hover:bg-gray-700';
+
+                    let content = '';
+                    if (isExpanded) {
+                        const stopsList = group.stops.map(stopId => 
+                            `<li class="p-2 bg-white dark:bg-gray-800 rounded-md text-sm font-mono text-gray-800 dark:text-gray-200 border-l-4 border-green-500">${stopId}</li>`
+                        ).join('');
+
+                        content = `
+                            <div class="p-4 pt-0 border-t border-indigo-200 dark:border-indigo-700 bg-gray-50 dark:bg-gray-900/50">
+                                <h4 class="text-md font-semibold text-indigo-700 dark:text-indigo-300 mb-2 flex items-center">
+                                    ${waypointsIcon}
+                                    Paradas para este grupo:
+                                </h4>
+                                <div class="max-h-48 overflow-y-auto">
+                                    <ul class="space-y-1">${stopsList.length > 0 ? stopsList : '<li class="p-2 text-sm text-gray-500 dark:text-gray-400">No hay paradas definidas para este grupo.</li>'}</ul>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center">
+                                    ${mapIcon} Coordenadas principales del grupo: ${group.coords}
+                                </p>
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 border border-gray-200 dark:border-gray-700">
+                            <button data-group-id="${group.id}" class="group-toggle flex justify-between items-center w-full p-4 text-left transition duration-200 ${headerBgClass}">
+                                <div class="flex items-center">
+                                    ${userIcon.replace('class="', `class="${userIconClass} `)}
+                                    <span class="font-bold text-lg text-gray-800 dark:text-gray-100">${group.name}</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <span class="mr-3 flex items-center">${mapPinIcon} ${group.stops.length} paradas</span>
+                                    ${chevronIcon}
+                                </div>
+                            </button>
+                            ${content}
+                        </div>
+                    `;
+                }).join('');
+
+                contentHTML = `
+                    <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-indigo-700 dark:text-indigo-400 flex items-center">
+                        ${userIcon.replace('mr-3', 'mr-2')}
+                        Grupos Asignados y sus Paradas
+                    </h2>
+                    <div class="space-y-3">${groupsHTML}</div>
+                `;
+            } else {
+                 contentHTML = `
+                    <div class="flex flex-col items-center justify-center h-40 p-4 bg-yellow-100 dark:bg-yellow-900/50 rounded-lg">
+                        ${alertIcon.replace('text-red-600', 'text-yellow-600')}
+                        <p class="mt-3 text-lg font-medium text-yellow-800 dark:text-yellow-400">No se encontraron datos de configuración para esta clave.</p>
+                    </div>
+                `;
+            }
+
+            configContainer.innerHTML = contentHTML;
+            
+            document.querySelectorAll('.group-toggle').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); 
+                    const groupId = button.getAttribute('data-group-id');
+                    toggleGroupExpansion(groupId);
+                });
+            });
+        }
+        
+        /**
+         * Realiza la llamada a la API con Exponential Backoff.
+         */
+        async function fetchConfig() {
+            isLoading = true;
+            error = null;
+            renderConfigContent(); // Muestra el loader
+
+            const activeUserKey = localStorage.getItem('active_user_key') || 'DEFAULT';
+            userName = activeUserKey;
+            userNameDisplay.textContent = userName;
+            
+            let attempt = 0;
+            while (attempt < MAX_RETRIES) {
+                try {
+                    const apiUrl = CONFIG_API_BASE_URL + activeUserKey;
+                    console.log(`Llamando al endpoint real: ${apiUrl}. Intento: ${attempt + 1}`);
+
+                    // --------------------------------------------------------
+                    // --- PUNTO DE INTEGRACIÓN REAL DE LA API (ACTIVO) ---
+                    // --------------------------------------------------------
+                    
+                    const response = await fetch(apiUrl);
+                    
+                    // Comprobar si la respuesta fue exitosa (código 200-299)
+                    if (!response.ok) {
+                        // Lanzar un error para ser capturado por el bloque catch
+                        throw new Error(`Error HTTP! Estado: ${response.status} - ${response.statusText}`);
+                    }
+                    
+                    configData = await response.json(); 
+
+                    // --------------------------------------------------------
+                    // --- SIMULACIÓN DE MOCK Y LATENCIA (DESACTIVADO) ---
+                    // --------------------------------------------------------
+                    // await new Promise(resolve => setTimeout(resolve, 500)); 
+                    // configData = MOCK_API_RESPONSES[activeUserKey] || MOCK_API_RESPONSES["DEFAULT"];
+                    
+                    // --------------------------------------------------------
+                    
+                    isLoading = false;
+                    error = null;
+                    renderConfigContent();
+                    return; // Éxito: Salir de la función
+
+                } catch (e) {
+                    error = `Error al cargar la configuración (${activeUserKey}): ${e.message}`;
+                    console.error(`Fallo en el intento ${attempt + 1}:`, e);
+                    attempt++;
+
+                    if (attempt >= MAX_RETRIES) {
+                        isLoading = false;
+                        // Si falla tras todos los reintentos, intentar usar el MOCK como ÚLTIMO RECURSO
+                        configData = MOCK_API_RESPONSES["DEFAULT"];
+                        error = `Fallo de conexión tras ${MAX_RETRIES} intentos. Se muestra la configuración por defecto (MOCK).`;
+                        renderConfigContent();
+                        return; 
+                    }
+
+                    // Implementar Backoff Exponencial: 1s, 2s, 4s...
+                    const delay = INITIAL_BACKOFF_MS * (2 ** attempt);
+                    console.log(`Reintentando en ${delay}ms... (Intento ${attempt}/${MAX_RETRIES})`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        /**
+         * Alterna la visibilidad del panel de configuración principal.
+         */
+        function toggleConfig() {
+            isConfigVisible = !isConfigVisible;
+            if (!isConfigVisible) {
+                expandedGroupId = null; // Colapsa todos al ocultar el panel
+            }
+            
+            // Actualizar el estilo y el texto del botón principal
+            toggleConfigButton.classList.toggle('bg-indigo-700', isConfigVisible);
+            toggleConfigButton.classList.toggle('hover:bg-indigo-800', isConfigVisible);
+            toggleConfigButton.classList.toggle('bg-indigo-600', !isConfigVisible);
+            toggleConfigButton.classList.toggle('hover:bg-indigo-700', !isConfigVisible);
+            
+            const iconPath = isConfigVisible ? 'M18 15l-6-6-6 6' : 'M6 9l6 6 6-6';
+            const buttonText = isConfigVisible ? 'Ocultar Configuración' : 'Visualizar Configuración';
+            
+            toggleConfigButton.innerHTML = `
+                <svg id="toggleIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-2">
+                    <path d="${iconPath}"></path>
+                </svg>
+                ${buttonText}
+            `;
+            
+            renderConfigContent();
+        }
+
+        /**
+         * Alterna la expansión de un grupo en el acordeón.
+         */
+        function toggleGroupExpansion(groupId) {
+            expandedGroupId = expandedGroupId === groupId ? null : groupId;
+            renderConfigContent();
+        }
+
+        // --- INICIALIZACIÓN Y MANEJO DE EVENTOS ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Inicializar localStorage si es necesario
+            if (!localStorage.getItem('active_user_key')) {
+                localStorage.setItem('active_user_key', 'DEFAULT');
+            }
+            
+            // 2. Cargar datos iniciales
+            fetchConfig();
+
+            // 3. Adjuntar Listeners
+            toggleConfigButton.addEventListener('click', toggleConfig);
+            saveKeyButton.addEventListener('click', () => {
+                // Esto requeriría un input para cambiar la clave.
+                // Aquí solo mostramos un mensaje de simulación.
+                console.log('Guardando clave (simulación)...');
+                customAlert('Clave guardada o actualizada (simulación).');
+            });
+        });
+
+    </script>
+</body>
+</html>
