@@ -24,7 +24,15 @@ REMOTE_CONFIG_URL = os.environ.get(
 )
 
 app = Flask(__name__)
-CORS(app)
+
+# =================================================================
+# CORRECCIÓN CRÍTICA: CONFIGURACIÓN CORS EXPLÍCITA
+# Esto soluciona el error 'Access-Control-Allow-Origin'.
+# Permitimos todos los orígenes para la comunicación entre dominios.
+# =================================================================
+CORS(app, resources={r"/*": {"origins": "*"}}) 
+# =================================================================
+
 
 # Variables globales para almacenar los datos GTFS cargados una sola vez
 # Esto evita recargar los archivos .txt en cada petición.
@@ -45,18 +53,21 @@ def haversine(lat1, lon1, lat2, lon2):
     distance = R * c
     return distance
 
-def fetch_remote_user_groups():
-    """Descarga el JSON de configuración de TODOS los usuarios desde la URL remota."""
+def _load_remote_config(url):
+    """Carga la configuración de usuario y grupos desde la URL remota."""
+    
+    print(f"Descargando configuración remota de: {url}")
     try:
-        response = requests.get(REMOTE_CONFIG_URL, timeout=10)
-        response.raise_for_status()
-        return response.json()
+        response = requests.get(url, timeout=10)
+        response.raise_for_status() 
+        config_data = response.json()
+        
+        print("Configuración remota cargada exitosamente.")
+        return config_data
+
     except requests.exceptions.RequestException as e:
-        print(f"❌ ERROR al descargar la configuración remota: {e}")
-        return None 
-    except Exception as e:
-        print(f"❌ ERROR inesperado al procesar JSON remoto: {e}")
-        return None
+        print(f"ERROR: No se pudo cargar la configuración remota. {e}")
+        raise ConnectionError(f"ERROR CRÍTICO: No se pudo acceder a la configuración remota. Verificar URL o conexión.")
 
 def _get_user_config(key):
     """
@@ -64,7 +75,7 @@ def _get_user_config(key):
     """
     try:
         # Aquí se llama a la función sin caché
-        config = fetch_remote_user_groups(REMOTE_CONFIG_URL) 
+        config = _load_remote_config(REMOTE_CONFIG_URL) 
         if key not in config:
             raise KeyError(f"Clave de usuario '{key}' no encontrada en el JSON remoto.")
         return config[key]
@@ -275,13 +286,6 @@ def run_once_setup():
         load_gtfs_data() 
         
         initial_setup_done = True
-        
-# 🛑 ELIMINADA: @app.before_first_request ha sido ELIMINADA aquí
-#
-# @app.before_first_request
-# def initial_load():
-#     """Carga los datos GTFS en memoria al inicio de la aplicación."""
-#     load_gtfs_data()
 
 # Endpoint: /api/config
 @app.route('/api/config', methods=['GET'])
@@ -301,7 +305,7 @@ def get_nearest_group():
     if not user_key or user_lat is None or user_lon is None:
         return jsonify({"error": "Faltan parámetros 'key', 'lat' o 'lon'."}), 400
 
-    user_groups_db = fetch_remote_user_groups()
+    user_groups_db = _load_remote_config(REMOTE_CONFIG_URL)
     if user_groups_db is None:
         return jsonify({"error": "No se pudo cargar la base de datos de grupos remota."}), 500
 
@@ -348,7 +352,7 @@ def get_bus_schedule(group_name):
     if GTFS_DATA is None:
          return jsonify({"error": "Datos GTFS no cargados. Inténtalo de nuevo."}), 500
 
-    user_groups_db = fetch_remote_user_groups()
+    user_groups_db = _load_remote_config(REMOTE_CONFIG_URL)
     if user_groups_db is None:
         return jsonify({"error": "No se pudo cargar la base de datos de grupos remota."}), 500
         
