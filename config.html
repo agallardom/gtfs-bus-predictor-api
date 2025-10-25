@@ -24,7 +24,7 @@
         
         <!-- Encabezado -->
         <div class="flex items-center mb-6 border-b pb-4 border-gray-100 dark:border-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500 mr-3"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 0-1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 0 1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-500 mr-3"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 0-1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l-.43-.25a2 2 0 0 0 1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                 Panel de Gestión de Usuario
             </h1>
@@ -74,17 +74,31 @@
         const MAX_RETRIES = 3;
         const INITIAL_BACKOFF_MS = 1000; // 1 segundo de espera inicial
 
-        // --- MOCK DE DATOS DEL ENDPOINT /config (SOLO PARA REFERENCIA, NO SE EJECUTA) ---
-        // Este objeto NO se utiliza para cargar datos, solo para mostrar la estructura.
+        // --- MOCK DE DATOS DEL ENDPOINT /config (AHORA INCLUYE NOMBRES DE PARADA) ---
+        // Se asume que la respuesta de la API contiene un objeto de paradas {stopId: stopName}
         const MOCK_API_RESPONSES = {
             "DEFAULT": { 
                 "CASA": {
                     "coords": "41.53904, 2.11787",
-                    "stops": ["TUS_14165", "TUS_14166", "TUS_14309", "ROD_78704", "FGC_PJ"]
+                    "stops": {
+                        "TUS_14165": "Avinguda de Sabadell - El Corte Inglés",
+                        "TUS_14166": "Plaça de Catalunya",
+                        "TUS_14309": "Estació Rodalies Centre",
+                        "ROD_78704": "Sabadell Centre - Estació",
+                        "FGC_PJ": "FGC Pl. Major"
+                    }
                 },
                 "CASA_MARIA": {
                     "coords": "41.57131, 2.08258",
-                    "stops": ["TUS_14360", "TUS_14227", "TUS_16590", "TUS_14300", "TUS_14398", "ROD_78709", "FGC_PN"]
+                    "stops": {
+                        "TUS_14360": "Torrent de la Riera",
+                        "TUS_14227": "Plaça de la Creu Alta",
+                        "TUS_16590": "Mercat Central",
+                        "TUS_14300": "Rambla",
+                        "TUS_14398": "Gran Via",
+                        "ROD_78709": "Terrassa Estació del Nord",
+                        "FGC_PN": "FGC Pl. del Nord"
+                    }
                 }
             },
             // ... otros mocks
@@ -104,7 +118,7 @@
         const toggleConfigButton = document.getElementById('toggleConfigButton');
         const saveKeyButton = document.getElementById('saveKeyButton');
 
-        // --- UTILIDADES Y RENDERIZADO (sin cambios en su lógica) ---
+        // --- UTILIDADES Y RENDERIZADO ---
 
         /**
          * Muestra un modal de alerta personalizado (sustituto de alert()).
@@ -168,12 +182,14 @@
                             name: groupName,
                             id: groupName,
                             coords: groupData.coords || 'N/A',
-                            stops: groupData.stops && Array.isArray(groupData.stops) ? groupData.stops.sort() : []
+                            // 'stops' ahora se espera que sea un objeto {id: name}
+                            stops: groupData.stops || {} 
                         });
                     }
                 }
                 
                 let groupsHTML = groups.map(group => {
+                    const stopCount = Object.keys(group.stops).length; // Contar paradas
                     const isExpanded = expandedGroupId === group.id;
                     const chevronIcon = isExpanded 
                         ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-indigo-600"><path d="M18 15l-6-6-6 6"></path></svg>`
@@ -184,9 +200,14 @@
 
                     let content = '';
                     if (isExpanded) {
-                        const stopsList = group.stops.map(stopId => 
-                            `<li class="p-2 bg-white dark:bg-gray-800 rounded-md text-sm font-mono text-gray-800 dark:text-gray-200 border-l-4 border-green-500">${stopId}</li>`
+                        // --- CAMBIO CLAVE: Renderizado de ID y Nombre ---
+                        const stopsList = Object.entries(group.stops).map(([stopId, stopName]) => 
+                            `<li class="p-2 bg-white dark:bg-gray-800 rounded-md text-sm text-gray-800 dark:text-gray-200 border-l-4 border-green-500">
+                                <span class="font-bold text-indigo-600 dark:text-indigo-300">${stopName}</span> 
+                                <span class="font-mono text-gray-500 dark:text-gray-400">(${stopId})</span>
+                            </li>`
                         ).join('');
+                        // --------------------------------------------------
 
                         content = `
                             <div class="p-4 pt-0 border-t border-indigo-200 dark:border-indigo-700 bg-gray-50 dark:bg-gray-900/50">
@@ -195,7 +216,7 @@
                                     Paradas para este grupo:
                                 </h4>
                                 <div class="max-h-48 overflow-y-auto">
-                                    <ul class="space-y-1">${stopsList.length > 0 ? stopsList : '<li class="p-2 text-sm text-gray-500 dark:text-gray-400">No hay paradas definidas para este grupo.</li>'}</ul>
+                                    <ul class="space-y-1">${stopCount > 0 ? stopsList : '<li class="p-2 text-sm text-gray-500 dark:text-gray-400">No hay paradas definidas para este grupo.</li>'}</ul>
                                 </div>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center">
                                     ${mapIcon} Coordenadas principales del grupo: ${group.coords}
@@ -212,7 +233,7 @@
                                     <span class="font-bold text-lg text-gray-800 dark:text-gray-100">${group.name}</span>
                                 </div>
                                 <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                    <span class="mr-3 flex items-center">${mapPinIcon} ${group.stops.length} paradas</span>
+                                    <span class="mr-3 flex items-center">${mapPinIcon} ${stopCount} paradas</span>
                                     ${chevronIcon}
                                 </div>
                             </button>
@@ -256,7 +277,7 @@
             error = null;
             renderConfigContent(); // Muestra el loader
 
-            const activeUserKey = localStorage.getItem('active_user_key') || 'DEFAULT';
+            const activeUserKey = localStorage.getItem('bus_predictor_user_key') || 'DEFAULT';
             userName = activeUserKey;
             userNameDisplay.textContent = userName;
             
@@ -283,8 +304,10 @@
                     // --------------------------------------------------------
                     // --- SIMULACIÓN DE MOCK Y LATENCIA (DESACTIVADO) ---
                     // --------------------------------------------------------
-                    // await new Promise(resolve => setTimeout(resolve, 500)); 
-                    // configData = MOCK_API_RESPONSES[activeUserKey] || MOCK_API_RESPONSES["DEFAULT"];
+                    /*
+                    await new Promise(resolve => setTimeout(resolve, 500)); 
+                    configData = MOCK_API_RESPONSES[activeUserKey] || MOCK_API_RESPONSES["DEFAULT"];
+                    */
                     
                     // --------------------------------------------------------
                     
@@ -355,8 +378,10 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             // 1. Inicializar localStorage si es necesario
-            if (!localStorage.getItem('active_user_key')) {
-                localStorage.setItem('active_user_key', 'DEFAULT');
+            // Nota: Se usa 'bus_predictor_user_key' en fetchConfig, pero se inicializa 'active_user_key'. 
+            // Para consistencia, cambiaré la inicialización a 'bus_predictor_user_key'.
+            if (!localStorage.getItem('bus_predictor_user_key')) {
+                localStorage.setItem('bus_predictor_user_key', 'DEFAULT');
             }
             
             // 2. Cargar datos iniciales

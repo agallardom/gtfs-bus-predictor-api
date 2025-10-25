@@ -73,19 +73,59 @@ def _load_remote_config(url):
 
 def _get_user_config(key):
     """
-    Obtiene la configuración específica para la clave de usuario proporcionada.
+    Obtiene la configuración específica para la clave de usuario y la enriquece
+    añadiendo los nombres de las paradas a cada grupo.
     """
+    global GTFS_DATA
+    if GTFS_DATA is None:
+        raise Exception("GTFS Data not loaded. Cannot process stop names.") # Error preventivo
+        
     try:
-        # Aquí se llama a la función sin caché
+        # 1. Obtener la configuración base
         config = _load_remote_config(REMOTE_CONFIG_URL) 
         if key not in config:
             raise KeyError(f"Clave de usuario '{key}' no encontrada en el JSON remoto.")
-        return config[key]
+            
+        user_config = config[key]
+        
+        # 2. Enriquecer la configuración con nombres de parada (stop_name)
+        stops_df = GTFS_DATA['stops']
+        
+        for group_name, group_data in user_config.items():
+            stop_ids = group_data.get('stops')
+            if stop_ids:
+                enriched_stops = []
+                for stop_id_raw in stop_ids:
+                    try:
+                        stop_id = int(stop_id_raw)
+                        # Buscar el nombre y las coordenadas en el DataFrame
+                        stop_info = stops_df[stops_df['stop_id'] == stop_id].iloc[0]
+                        
+                        enriched_stops.append({
+                            "stop_id": str(stop_id),
+                            "stop_name": stop_info['stop_name'],
+                            "lat": stop_info['stop_lat'],
+                            "lon": stop_info['stop_lon']
+                        })
+                    except (ValueError, IndexError):
+                        # Si el ID no es válido o no se encuentra
+                        enriched_stops.append({
+                            "stop_id": str(stop_id_raw),
+                            "stop_name": "Parada no encontrada/inválida",
+                            "lat": None,
+                            "lon": None
+                        })
+                
+                # Reemplazar la lista simple de IDs con la lista enriquecida de objetos
+                user_config[group_name]['stops'] = enriched_stops
+                
+        return user_config
     except (ConnectionError, KeyError) as e:
-        # Re-lanza la excepción para que el decorador la capture y devuelva 400 o 500
         raise e
     except Exception as e:
         raise Exception(f"Error inesperado al procesar la configuración: {e}")
+
+
 
 # =======================================================================
 # 🛑 NUEVA FUNCIÓN: CARGA ÚNICA DE DATOS GTFS 🛑
@@ -310,7 +350,7 @@ def get_config():
         print(f"Error inesperado: {e}")
         return jsonify({"error": "Error interno del servidor."}), 500
     
-    
+
 @app.route('/api/nearest', methods=['GET'])
 def get_nearest_group():
     """Ruta para determinar el grupo más cercano, usando la configuración del usuario."""
