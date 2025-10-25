@@ -49,7 +49,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return distance
 
 
-def _load_remote_config(url):
+def fetch_remote_user_groups(url):
     """
     Carga la configuración de usuario y grupos desde la URL remota.
     La carga siempre es directa, sin caché.
@@ -77,7 +77,7 @@ def _get_user_config(key):
     """
     try:
         # Aquí se llama a la función sin caché
-        config = _load_remote_config(REMOTE_CONFIG_URL) 
+        config = fetch_remote_user_groups(REMOTE_CONFIG_URL) 
         if key not in config:
             raise KeyError(f"Clave de usuario '{key}' no encontrada en el JSON remoto.")
         return config[key]
@@ -86,29 +86,6 @@ def _get_user_config(key):
         raise e
     except Exception as e:
         raise Exception(f"Error inesperado al procesar la configuración: {e}")
-
-def _load_config_and_handle_errors(f):
-    """
-    Decorador para cargar la configuración y manejar errores comunes de la API.
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        user_key = request.args.get('user_key') 
-        if not user_key:
-            return jsonify({"error": "Parámetro 'user_key' es obligatorio."}), 400
-
-        try:
-            user_config = _get_user_config(user_key)
-            return f(user_config=user_config, *args, **kwargs)
-        except KeyError as e:
-            return jsonify({"error": str(e)}), 400
-        except ConnectionError as e:
-            return jsonify({"error": f"Error de conexión: {str(e)}"}), 503
-        except Exception as e:
-            print(f"Error inesperado: {e}")
-            return jsonify({"error": "Error interno del servidor."}), 500
-    return decorated_function
-
 
 # =======================================================================
 # CARGA ÚNICA DE DATOS GTFS 

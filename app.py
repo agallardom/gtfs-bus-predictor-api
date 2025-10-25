@@ -58,6 +58,22 @@ def fetch_remote_user_groups():
         print(f"❌ ERROR inesperado al procesar JSON remoto: {e}")
         return None
 
+def _get_user_config(key):
+    """
+    Obtiene la configuración específica para la clave de usuario proporcionada.
+    """
+    try:
+        # Aquí se llama a la función sin caché
+        config = fetch_remote_user_groups(REMOTE_CONFIG_URL) 
+        if key not in config:
+            raise KeyError(f"Clave de usuario '{key}' no encontrada en el JSON remoto.")
+        return config[key]
+    except (ConnectionError, KeyError) as e:
+        # Re-lanza la excepción para que el decorador la capture y devuelva 400 o 500
+        raise e
+    except Exception as e:
+        raise Exception(f"Error inesperado al procesar la configuración: {e}")
+
 # =======================================================================
 # 🛑 NUEVA FUNCIÓN: CARGA ÚNICA DE DATOS GTFS 🛑
 # =======================================================================
@@ -267,6 +283,13 @@ def run_once_setup():
 #     """Carga los datos GTFS en memoria al inicio de la aplicación."""
 #     load_gtfs_data()
 
+# Endpoint: /api/config
+@app.route('/api/config', methods=['GET'])
+def get_config(user_config):
+    """
+    Devuelve la configuración completa del usuario (grupos y paradas).
+    """
+    return jsonify(user_config)
 
 @app.route('/api/nearest', methods=['GET'])
 def get_nearest_group():

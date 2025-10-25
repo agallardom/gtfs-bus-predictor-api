@@ -269,7 +269,7 @@
         
         try {
             // AÑADIMOS EL PARÁMETRO 'key' A LA URL
-            const url = `${API_BASE_URL}bus/${groupName}?user_key=${userKey}`;
+            const url = `${API_BASE_URL}bus/${groupName}?key=${userKey}`;
             const response = await fetch(url);
             const data = await response.json();
 
