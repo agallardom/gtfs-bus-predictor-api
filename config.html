@@ -200,13 +200,15 @@
 
                     let content = '';
                     if (isExpanded) {
-                        // --- CAMBIO CLAVE: Renderizado de ID y Nombre ---
-                        const stopsList = Object.entries(group.stops).map(([stopId, stopName]) => 
-                            `<li class="p-2 bg-white dark:bg-gray-800 rounded-md text-sm text-gray-800 dark:text-gray-200 border-l-4 border-green-500">
-                                <span class="font-bold text-indigo-600 dark:text-indigo-300">${stopName}</span> 
-                                <span class="font-mono text-gray-500 dark:text-gray-400">(${stopId})</span>
-                            </li>`
-                        ).join('');
+                        // Asumiendo que 'group.stops' es el array de JSON:
+                        const stopsList = group.stops.map(parada => {
+                            // 'map' retorna implícitamente la cadena HTML en cada iteración
+                            return `<li class="p-2 bg-white dark:bg-gray-800 rounded-md text-sm text-gray-800 dark:text-gray-200 border-l-4 border-green-500">
+                                        <span class="font-bold text-indigo-600 dark:text-indigo-300">${parada.stop_name}</span> 
+                                        <span class="font-mono text-gray-500 dark:text-gray-400">(${parada.stop_id})</span>
+                                    </li>`;
+                        }).join(''); // <--- Une todas las cadenas HTML en una sola.
+
                         // --------------------------------------------------
 
                         content = `

@@ -188,32 +188,33 @@
             if (horarios.length === 0) {
                  busItemsHTML = `<p class="text-gray-500 italic p-3">No hay autobuses programados para el resto del día o fin de semana.</p>`;
             } else {
-                busItemsHTML = horarios.map((bus, index) => {
-                    const isSoon = bus.minutos_restantes !== 'N/A' && bus.minutos_restantes < 10;
-                    // Usar un color secundario (índigo) si no está a punto de llegar
-                    const bgColor = isSoon ? 'bg-red-500' : 'bg-indigo-600';
+                                    // Mapear los horarios ordenados a elementos visuales
+                    busItemsHTML = horarios.map((bus, index) => {
+                        const isSoon = bus.minutos_restantes !== 'N/A' && bus.minutos_restantes < 10;
+                        const bgColor = isSoon ? 'bg-red-500' : 'bg-green-600';
 
-                    return `
-                        <li class="flex justify-between items-center py-2 px-3 border-b last:border-b-0 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
-                            <div class="flex items-center space-x-3 w-1/3">
-                                <span class="font-bold text-lg ${bgColor} text-white px-2 py-1 rounded-full min-w-[3rem] text-center">
-                                    ${bus.linea}
-                                </span>
-                                <span class="text-gray-700 font-medium truncate" title="${bus.destino}">
-                                    ${bus.destino}
-                                </span>
-                            </div>
-                            <div class="flex-grow text-right font-mono text-gray-800 w-1/3">
-                                ${bus.proximo_bus}
-                            </div>
-                            <div class="text-right w-1/3">
-                                <span class="font-extrabold ${isSoon ? 'text-red-600' : 'text-green-700'} text-lg">
-                                    ${formatMinutes(bus.minutos_restantes)}
-                                </span>
-                            </div>
-                        </li>
-                    `;
-                }).join('');
+                        return `
+                            <li class="flex justify-between items-center py-2 px-3 border-b last:border-b-0 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+                                <div class="flex items-center space-x-3 w-1/3">
+                                    <span class="font-bold text-lg ${bgColor} text-white px-2 py-1 rounded-full min-w-[3rem] text-center">
+                                        ${bus.linea}
+                                    </span>
+                                    <span class="text-gray-700 font-medium truncate" title="${bus.destino}">
+                                        ${bus.destino}
+                                    </span>
+                                </div>
+                                <div class="flex-grow text-right font-mono text-gray-800 w-1/3">
+                                    ${bus.proximo_bus}
+                                    ${bus.siguiente_bus !== 'N/A' ? `(${bus.siguiente_bus})` : ''}
+                                </div>
+                                <div class="text-right w-1/3">
+                                    <span class="font-extrabold ${isSoon ? 'text-red-600' : 'text-green-700'} text-lg">
+                                        ${formatMinutes(bus.minutos_restantes)}
+                                    </span>
+                                </div>
+                            </li>
+                        `;
+                    }).join('');
             }
 
             const cardHTML = `

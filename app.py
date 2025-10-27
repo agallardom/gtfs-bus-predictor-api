@@ -95,14 +95,13 @@ def _get_user_config(key):
             stop_ids = group_data.get('stops')
             if stop_ids:
                 enriched_stops = []
-                for stop_id_raw in stop_ids:
+                for stop_id in stop_ids:
                     try:
-                        stop_id = int(stop_id_raw)
                         # Buscar el nombre y las coordenadas en el DataFrame
                         stop_info = stops_df[stops_df['stop_id'] == stop_id].iloc[0]
                         
                         enriched_stops.append({
-                            "stop_id": str(stop_id),
+                            "stop_id": stop_id,
                             "stop_name": stop_info['stop_name'],
                             "lat": stop_info['stop_lat'],
                             "lon": stop_info['stop_lon']
@@ -110,7 +109,7 @@ def _get_user_config(key):
                     except (ValueError, IndexError):
                         # Si el ID no es válido o no se encuentra
                         enriched_stops.append({
-                            "stop_id": str(stop_id_raw),
+                            "stop_id": stop_id,
                             "stop_name": "Parada no encontrada/inválida",
                             "lat": None,
                             "lon": None
