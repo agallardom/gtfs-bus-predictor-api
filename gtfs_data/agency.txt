@@ -139,6 +139,7 @@ LLE_5,AUTOBUSOS DE LLEIDA,http://WWW.MOVENTIS.ES/MARCAS/AUTOBUSOS-DE-LLEIDA,es,9
 MAC_MÇN,Balliu SL,https://www.balliusl.cat/ca/,ca,,,Europe/Madrid,,
 MAN_6,BusManresa,https://www.manresabus.com/,es,34 93 875 71 50,,Europe/Madrid,https://www.manresabus.com/,
 MAS_Masats,Masats Transports General,http://www.masatstransport.com,,Europe/Madrid,,Europe/Madrid,,
+MAT_1,Mataro,http://www.matarobus.cat/,ca,,,Europe/Madrid,,
 MON_1,urbà Mont-roig,https://mont-roig.cat/lajuntament/arees/mobilitat-i-transport/,ca,,,Europe/Madrid,,
 MOR_1,TPP Domènech Autocars,https://autocarsdomenech.cat/,ca,,,Europe/Madrid,,
 OLO_OLO,TPO,https://www.teisa-bus.com/es/tpo,ca,,,Europe/Madrid,,

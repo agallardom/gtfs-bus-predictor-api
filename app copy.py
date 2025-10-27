@@ -331,7 +331,6 @@ def run_once_setup():
         
 # Endpoint: /api/config
 @app.route('/api/config', methods=['GET'])
-@_load_config_and_handle_errors
 def get_config(user_config):
     """
     Devuelve la configuración completa del usuario (grupos y paradas).
@@ -341,7 +340,6 @@ def get_config(user_config):
 
 # Endpoint: /api/nearest
 @app.route('/api/nearest', methods=['GET'])
-@_load_config_and_handle_errors
 def get_nearest_group(user_config):
     """Ruta para determinar el grupo más cercano, usando la configuración del usuario."""
     user_lat = request.args.get('lat', type=float)

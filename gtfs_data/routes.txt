@@ -1,65 +1,296 @@
 agency_id,route_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_branding_url,route_sort_order
 ABR_1,ABR_1,Urbà,Nucli urbà - Estació FGC,,3,,6db51d,ffffff,,3
-AMB_62,AMB_248,SB1,Camps Blancs-FGC Molí Nou,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:248,ffaa00,343434,,3
-AMB_62,AMB_249,SB2,FGC St. Boi-Camps Blancs,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:249,ffaa00,343434,,3
-AMB_34,AMB_389,MB3,Molins R.-FGC La Floresta,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:389,ffaa00,343434,,3
-AMB_34,AMB_449,SV4,FGC St. Vicenç/Sant Roc,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:449,ffaa00,343434,,3
-AMB_34,AMB_450,ESC,FGC St. Vicenç-Instituts,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:450,ffaa00,343434,,3
-FGC_,FGC_FV,FV,Funicular de Vallvidrera,,7,http://www.fgc.cat/cat/barcelona-valles.asp,0A57A3,FFFFFF,,7
-FGC_,FGC_L1,L1,Cremallera de Nuria,,7,,000000,FFFFFF,,7
-FGC_,FGC_L12,L12,Sarrià - Reina Elisenda,,1,http://fgc.cat/cat/barcelona-valles.asp?linia=L12,b2aed3,FFFFFF,,1
-FGC_,FGC_L6,L6,Barcelona Pl. Catalunya - Sarrià,,1,http://www.fgc.cat/cat/barcelona-valles.asp?linia=L6,797FBC,FFFFFF,,1
-FGC_,FGC_L7,L7,Barcelona Pl. Catalunya - Av Tibidabo,,1,http://www.fgc.cat/cat/barcelona-valles.asp?linia=L7,B2600B,FFFFFF,,1
-FGC_,FGC_L8,L8,Barcelona Pl. Espanya - Molí Nou,,1,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=L8,E274AA,FFFFFF,,1
-FGC_,FGC_MM,MM,Cremallera Montserrat,,7,,000000,FFFFFF,,7
+ALS_720,ALS_2227,Lle-Bellat,Lleida-Bellaterra,,200,http://www.alsa.es,3fc8eb,ffffff,,200
+ALS_720,ALS_2237,Bell-Lleia,Bellaterra-Lleida,,200,http://www.alsa.es,3fc8eb,ffffff,,200
+ALS_720,ALS_3705,Bcn-Berga,Barcelona-Berga,,200,http://www.alsa.es,3fc8eb,ffffff,,200
+ALS_720,ALS_3706,Berga-Bcn,Berga-Barcelona,,200,http://www.alsa.es,3fc8eb,ffffff,,200
+AMB_37,AMB_502,CS2,Nucli urbà-Can Santeugini,Información de ruta - www.ambmobilitat.cat,3,https://app.ambmobilitat.cat/lines/busamb:502,ffaa00,343434,,3
+BGE_4,BGE_753,753,Manresa - Universitat Autónoma de Barcelona (Bellaterra),,3,,800080,ffffff,,3
+CIN_5,CIN_422,422,Granollers - Terrassa - Manresa,,3,,002f6c,ffffff,,3
+CIN_5,CIN_550,550,Mataró - Granollers,,3,,002f6c,ffffff,,3
+CIN_5,CIN_555,e13,Mataró - Granollers - Sabadell,,3,,0fb330,ffffff,,3
+CIN_5,CIN_559,L52,Granollers - Hospital - La Roca - Santa Agnès,,3,,3f5f50,ffffff,,3
+CIN_5,CIN_580,N73,Barcelona - Granollers - Sant Celoni (nocturn),,3,,002f6c,ffffff,,3
+CIN_5,CIN_581,N73,Sant Celoni - Granollers - Barcelona (nocturn),,3,,002f6c,ffffff,,3
 FGC_,FGC_R5,R5,Barcelona Pl. Espanya - Manresa,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R5,3dbfc3,FFFFFF,,2
 FGC_,FGC_R50,R50,Barcelona Pl. Espanya- Manresa,,2,http://fgc.cat/cat/llobregat-anoia.asp?linia=R50,00738a,FFFFFF,,2
 FGC_,FGC_R53,R53,Barcelona Pl. Espanya - Manresa,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R5,3dbfc3,FFFFFF,,2
-FGC_,FGC_R6,R6,Barcelona Pl. Espanya - Igualada,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R6,b3b3b3,FFFFFF,,2
-FGC_,FGC_R60,R60,Barcelona Pl. Espanya - Igualada,,2,http://fgc.cat/cat/llobregat-anoia.asp?linia=R60,5b5b5b,FFFFFF,,2
-FGC_,FGC_R63,R63,Barcelona Pl. Espanya - Igualada,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=R6,b3b3b3,FFFFFF,,2
-FGC_,FGC_RL1,RL1,Lleida - La Pobla,,2,,FF8000,FFFFFF,,2
-FGC_,FGC_RL2,RL2,Lleida - La Pobla,,2,,FF8000,FFFFFF,,2
 FGC_,FGC_S1,S1,Barcelona Pl. Catalunya - Terrassa Nacions Unides,,2,http://www.fgc.cat/cat/barcelona-valles.asp?linia=S1,EF7900,FFFFFF,,2
 FGC_,FGC_S2,S2,Barcelona Pl. Catalunya - Sabadell Parc del Nord,,2,http://www.fgc.cat/cat/barcelona-valles.asp?linia=S2,88BB0B,FFFFFF,,2
-FGC_,FGC_S3,S3,Barcelona Pl. Espanya - Can Ros,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=S33,4F868E,FFFFFF,,2
 FGC_,FGC_S4,S4,Barcelona Pl. Espanya - Olesa de Montserrat,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=S4,A78600,FFFFFF,,2
-FGC_,FGC_S8,S8,Barcelona Pl. Espanya - Martorell Enllaç,,2,http://www.fgc.cat/cat/llobregat-anoia.asp?linia=S8,49C0DE,FFFFFF,,2
-FGC_,FGC_S9,S9,Barcelona Pl. Espanya - Quatre Camins,,2,,DF4661,FFFFFF,,2
+FYT_12,FYT_201,201,Barcelona - Caldes de Montbui (per carretera),,3,,002f6c,ffffff,,3
+FYT_12,FYT_202,202,Barcelona - Sant Feliu de Codines (per carretera),,3,,002f6c,ffffff,,3
+FYT_12,FYT_203,203,Barcelona - Santa Maria d'Oló (per carretera),,3,,002f6c,ffffff,,3
+FYT_12,FYT_211,e9,Barcelona - Caldes de Montbui (per autopista),,3,,0fb330,ffffff,,3
+FYT_12,FYT_212,e9,Barcelona - Sant Feliu de Codines (per autopista),,3,,0fb330,ffffff,,3
+FYT_12,FYT_213,e9,Barcelona - Santa Maria d'Oló (per autopista),,3,,0fb330,ffffff,,3
+FYT_12,FYT_218,e9,Barcelona - Caldes de Montbui (per la variant de Palau),,3,,0fb330,ffffff,,3
+FYT_12,FYT_220,220,Barcelona - Sentmenat (per carretera),,3,,002f6c,ffffff,,3
+FYT_12,FYT_221,e10,Barcelona - Sentmenat (per autopista),,3,,0fb330,ffffff,,3
+FYT_12,FYT_230,230,Caldes de Montbui - Sabadell,,3,,002f6c,ffffff,,3
+FYT_12,FYT_231,231,Caldes de Montbui - Palau-solità i Plegamans - Sabadell,,3,,002f6c,ffffff,,3
+FYT_12,FYT_232,232,Polinyà - Sabadell,,3,,002f6c,ffffff,,3
+FYT_12,FYT_233,233,Palau-solità i Plegamans - Polinyà - Sabadell,,3,,002f6c,ffffff,,3
+FYT_12,FYT_234,234,Sabadell - Polinyà - Sentmenat - Caldes de Montbui - Palau-solità i Plegamans,,3,,002f6c,ffffff,,3
+FYT_12,FYT_240,240,Hospital de Mollet - Caldes de Montbui,,3,,002f6c,ffffff,,3
+FYT_12,FYT_245,245,Sentmenat - Caldes - Palau - Polinyà - U. A. B.,Sentmenat - Caldes - Palau-solità i Plegamans - Polinyà - U. A. B.,3,,002f6c,ffffff,,3
+FYT_12,FYT_280,N70,Barcelona - Caldes de Montbui - Barcelona (nocturn),,3,,df9abf,ffffff,,3
+FYT_12,FYT_296,296,Servei Urbà de Palau-solità i Plegamans,,3,,002f6c,ffffff,,3
+GEN_42574,GEN_0047,690,Badalona-Sta.Coloma G.-Ripollet-UAB,,3,,009485,ffffff,,3
+GEN_42674,GEN_0050,A2,Badia del V.-Barberà del V.-Barcelona,,3,,009485,ffffff,,3
+GEN_42608,GEN_0082,N70,Barcelona - Caldes de Montbui (SN),,3,,009485,ffffff,,3
+GEN_42673,GEN_0084,N65,Barcelona - Castellar del Vallès (SN),,3,,009485,ffffff,,3
+GEN_42605,GEN_0089,320,Mollet del Vallès - Barcelona per carretera,,3,,009485,ffffff,,3
+GEN_42672,GEN_0091,N51,Barcelona - Esparreguera (SN),,3,,009485,ffffff,,3
+GEN_42605,GEN_0095,N71,Barcelona - Granollers (SN),,3,,009485,ffffff,,3
+GEN_42605,GEN_0096,400,Granollers - Barcelona per autopista,,3,,009485,ffffff,,3
+GEN_42605,GEN_0098,N72,Barcelona - la Garriga (SN),,3,,009485,ffffff,,3
+GEN_42605,GEN_0111,501,Montornès del Vallès - Barcelona,,3,,009485,ffffff,,3
+GEN_42574,GEN_0119,E4,Barcelona - Ripollet,,3,,009485,ffffff,,3
+GEN_42674,GEN_0121,N61,Barcelona-Terrassa-Sabadell-Barcelona (SN),,3,,009485,ffffff,,3
+GEN_42674,GEN_0123,N64,Barcelona-Sabadell-Terrassa-Barcelona (SN),,3,,009485,ffffff,,3
+GEN_42679,GEN_0125,N73,Barcelona - Sant Celoni (SN),,3,,009485,ffffff,,3
+GEN_42608,GEN_0127,202 203,Santa Maria d'Oló-Barcelona per ctra.,,3,,009485,ffffff,,3
+GEN_42608,GEN_0128,E9,(212 213) Santa Maria d'Oló - Barcelona,,3,,009485,ffffff,,3
+GEN_42675,GEN_0131,L0131,Barcelona - Solsona - la Farga de Moles,,3,,009485,ffffff,,3
+GEN_42582,GEN_0136,N62,Barcelona-UAB-Sant Cugat del Vallès (SN),,3,,009485,ffffff,,3
 GEN_42674,GEN_0151,L0151,Bellaterra (FGC) - Cerdanyola,,3,,009485,ffffff,,3
-GEN_42547,GEN_0215,C1,Capellades - Estació d'FGC,,3,,009485,ffffff,,3
-GEN_42547,GEN_0216,L0216,Urbà de Piera: Piera (FGC) - Capellades,,3,,009485,ffffff,,3
-GEN_42547,GEN_0367,H1,Hostalets de Pierola - Piera (FGC),,3,,009485,ffffff,,3
+GEN_42674,GEN_0187,B4,Badia del Vallès-Barberà del V.-Cerdanyola del V.,,3,,009485,ffffff,,3
+GEN_42608,GEN_0194,231,Caldes de Montbui-Palau-solità-Polinyà-Sabadell,,3,,009485,ffffff,,3
+GEN_42608,GEN_0197,201,Caldes de Montbui-Palau-Barcelona per ctra.,,3,,009485,ffffff,,3
+GEN_42608,GEN_0198,230,Caldes de Montbui - Sentmenat - Sabadell,,3,,009485,ffffff,,3
+GEN_42608,GEN_0199,E9,Barcelona - Caldes de Montbui,,3,,009485,ffffff,,3
+GEN_42673,GEN_0232,C7,Castellbisbal-Terrassa-Sabadell (Can Rull),,3,,009485,ffffff,,3
+GEN_42605,GEN_0251,646,Alella urbanitzacions - el Masnou,,3,,009485,ffffff,,3
+GEN_42672,GEN_0268,L0268,El Bruc (Montserrat Park)-Esparreguera-Martorell,,3,,009485,ffffff,,3
+GEN_42605,GEN_0272,641,el Masnou - Granollers,,3,,009485,ffffff,,3
+GEN_42605,GEN_0310,E21,Barcelona - Mollet del Vallès,,3,,009485,ffffff,,3
+GEN_42605,GEN_0344,L41,TransGran: Canovelles (Tibel)-Granollers,,3,,009485,ffffff,,3
+GEN_42605,GEN_0345,330,Granollers - Mollet del Vallès,,3,,009485,ffffff,,3
+GEN_42605,GEN_0348,430,Granollers-Centre Penitenciari Quatre Camins,,3,,009485,ffffff,,3
+GEN_42605,GEN_0352,A5,Urbà de Lliçà d'Amunt: Can Xicota-Granollers,,3,,009485,ffffff,,3
+GEN_42605,GEN_0356,335,Polinyà - Granollers (TAD),,3,,009485,ffffff,,3
+GEN_42605,GEN_0357,340,Sant Feliu de Codines-Granollers,,3,,009485,ffffff,,3
+GEN_42679,GEN_0358,422,Granollers-Terrassa-Manresa,,3,,009485,ffffff,,3
+GEN_42605,GEN_0359,596,Vallromanes-Vilanova del V.-Granollers,,3,,009485,ffffff,,3
+GEN_42672,GEN_0371,L0371,Igualada - Barcelona pel Bruc,,3,,009485,ffffff,,3
+GEN_42605,GEN_0458,A1,Urbà de Lliçà d'Amunt: Palaudàries,,3,,009485,ffffff,,3
+GEN_42672,GEN_0491,L0491,Manresa - Tarragona,,3,,009485,ffffff,,3
+GEN_42639,GEN_0492,753,Manresa - Campus UAB,,3,,009485,ffffff,,3
+GEN_42679,GEN_0494,E13,Mataró - Granollers - Sabadell,,3,,009485,ffffff,,3
+GEN_42679,GEN_0500,550,Mataró - Granollers per carretera,,3,,009485,ffffff,,3
+GEN_42605,GEN_0509,355 356,Martorelles - Mollet del Vallès,,3,,009485,ffffff,,3
+GEN_42605,GEN_0511,376,Mollet - Martorelles (Polígons Industrials),,3,,009485,ffffff,,3
+GEN_42582,GEN_0512,648,Montcada-Ripollet-CV-UAB-Bellaterra (SC),,3,,009485,ffffff,,3
+GEN_42605,GEN_0518,375,Montmeló-Parets-Montornès-Montmeló,,3,,009485,ffffff,,3
+GEN_42642,GEN_0532,M2,Urbà d'Olesa de Montserrat,,3,,009485,ffffff,,3
+GEN_42642,GEN_0533,M1,Olesa de Montserrat-Terrassa-Campus UAB,,3,,009485,ffffff,,3
+GEN_42641,GEN_0540,L0540,Olot - UAB,,3,,009485,ffffff,,3
+GEN_42641,GEN_0541,L0541,Olot - UAB per Banyoles,,3,,009485,ffffff,,3
+GEN_42605,GEN_0561,370,Parets-Montmeló-Montornès-Parets,,3,,009485,ffffff,,3
+GEN_42574,GEN_0602,620,Ripollet - Barcelona per carretera,,3,,009485,ffffff,,3
+GEN_42674,GEN_0618,B1,Sabadell-Barberà-Badia del Vallès,,3,,009485,ffffff,,3
+GEN_42674,GEN_0619,A1,Sabadell-Barberà del Vallès-Barcelona,,3,,009485,ffffff,,3
+GEN_42673,GEN_0620,C1,Sabadell - Castellar del Vallès,,3,,009485,ffffff,,3
+GEN_42673,GEN_0623,C3,Sabadell - Sant Llorenç Savall,,3,,009485,ffffff,,3
+GEN_42673,GEN_0625,C2,Sabadell - Terrassa - Martorell,,3,,009485,ffffff,,3
+GEN_42674,GEN_0626,B6,Sabadell-Barberà del Vallès-Campus UAB,,3,,009485,ffffff,,3
+GEN_42608,GEN_0687,E10,Barcelona-Santa Perpètua-Sentmenat,,3,,009485,ffffff,,3
+GEN_42605,GEN_0706,295,Santa Perpètua de Mogoda - la Llagosta,,3,,009485,ffffff,,3
+GEN_42642,GEN_0737,M12,Castellbell i el Vilar-Rellinars-Terrassa,,3,,009485,ffffff,,3
+GEN_42642,GEN_0738,M8A,Matadepera-Terrassa (Estació Autobusos),,3,,009485,ffffff,,3
+GEN_42673,GEN_0739,C5,Terrassa - Sabadell,,3,,009485,ffffff,,3
+GEN_42642,GEN_0741,M11,Terrassa - Mura - Talamanca,,3,,009485,ffffff,,3
+GEN_42642,GEN_0742,M7,Ullastrell - Terrassa,,3,,009485,ffffff,,3
+GEN_42674,GEN_0774,E3,Barcelona-Cerdanyola del Vallès-Campus UAB,,3,,009485,ffffff,,3
+GEN_42642,GEN_0775,M5,Vacarisses - Terrassa,,3,,009485,ffffff,,3
+GEN_42605,GEN_0786,E19,Barcelona-Alella-Vallromanes-Vilanova Vallès,,3,,009485,ffffff,,3
+GEN_42642,GEN_0807,M6,Viladecavalls - Terrassa,,3,,009485,ffffff,,3
+GEN_42605,GEN_0900,365,Santa Perpètua - Mollet - Campus UAB,,3,,009485,ffffff,,3
+GEN_42642,GEN_0922,M8D,Matadepera-Terrassa (Estació del Nord),,3,,009485,ffffff,,3
+GEN_42642,GEN_0928,M4,Olesa-Santa Maria de Vilalba-Martorell,,3,,009485,ffffff,,3
+GEN_42674,GEN_0953,B8,Sant Cugat-Rubí-Terrassa-Sant Quirze,,3,,009485,ffffff,,3
+GEN_42674,GEN_0954,B3,Sabadell - Matadepera (les Pedritxes),,3,,009485,ffffff,,3
+GEN_42674,GEN_1008,LB1,Urbà de Barberà del Vallès,,3,,009485,ffffff,,3
+GEN_42605,GEN_1196,502,Barcelona-Granollers-Llinars per autopista,,3,,009485,ffffff,,3
+GEN_42655,GEN_1200,412,Granollers-Parets del Vallès-Campus UAB,,3,,009485,ffffff,,3
+GEN_42605,GEN_1280,L51,TransGran: Granollers - la Roca Village,,3,,009485,ffffff,,3
+GEN_42605,GEN_1282,389,Urbà de Sant Fost (Sant Fost - Mollet),,3,,009485,ffffff,,3
+GEN_42605,GEN_1283,361,Sant Fost de Campsentelles-Sabadell,,3,,009485,ffffff,,3
+GEN_42605,GEN_1284,360,Badalona - Sabadell,,3,,009485,ffffff,,3
+GEN_42608,GEN_1308,233,Palau-solità - Polinyà - Sabadell,,3,,009485,ffffff,,3
+GEN_42593,GEN_1315,L1315,Girona - Bellaterra,,3,,009485,ffffff,,3
+GEN_42605,GEN_1389,500,Granollers - Barcelona per carretera,,3,,009485,ffffff,,3
+GEN_42674,GEN_1414,B2,Sabadell-Barberà-Cerdanyola-Ripollet,,3,,009485,ffffff,,3
+GEN_42574,GEN_1427,685,Can Tiana - Ripollet - Montcada (CAP),,3,,009485,ffffff,,3
+GEN_42608,GEN_1465,240,Castellterçol-Caldes de Montbui-Mollet (SC),,3,,009485,ffffff,,3
+GEN_42605,GEN_1468,345,Parets-Mollet (Hospital)-Santa Perpètua,,3,,009485,ffffff,,3
+GEN_42608,GEN_1469,296,Urbà de Palau-solità i Plegamans,,3,,009485,ffffff,,3
+GEN_42608,GEN_1470,234,Sabadell-Polinyà-Sentmenat-Caldes-Palau,,3,,009485,ffffff,,3
+GEN_42675,GEN_1493,L1493,Lleida - Campus UAB,,3,,009485,ffffff,,3
+GEN_42605,GEN_1522,348,l'Ametlla del Vallès - Granollers,,3,,009485,ffffff,,3
+GEN_42574,GEN_1523,621,Barcelona - Polígon Industrial Santiga,,3,,009485,ffffff,,3
+GEN_42605,GEN_1541,390,Urbà de Parets del Vallès,,3,,009485,ffffff,,3
+GEN_42674,GEN_1557,N66,Terrassa - Matadepera (SN),,3,,009485,ffffff,,3
+GEN_42674,GEN_1558,N67,Terrassa - Vacarisses (SN),,3,,009485,ffffff,,3
+GEN_42642,GEN_1569,M5A,Vacarisses: els Caus - IES,,3,,009485,ffffff,,3
+GEN_42674,GEN_1586,E2.1,Barcelona (Sagrera) - Terrassa,,3,,009485,ffffff,,3
+GEN_42673,GEN_1587,E1,Barcelona-Sabadell-Castellar del Vallès,,3,,009485,ffffff,,3
+GEN_42605,GEN_1590,L1,TransGran: Can Gili - Hospital,,3,,009485,ffffff,,3
+GEN_42605,GEN_1591,L21,TransGran: Can Bassa - Bellavista,,3,,009485,ffffff,,3
+GEN_42605,GEN_1592,L22,TransGran: Can Bassa - Hospital,,3,,009485,ffffff,,3
+GEN_42605,GEN_1593,L20,TransGran: Can Bassa - Bellavista,,3,,009485,ffffff,,3
+GEN_42605,GEN_1614,E7,Barcelona - la Vall del Tenes,,3,,009485,ffffff,,3
 GEN_42674,GEN_1619,PA,Estació FGC Bellaterra - Parc Alba,,3,,009485,ffffff,,3
-ROD_1071,ROD_1.RG1,RG1,Portbou - L'Hospitalet de Llobregat,,2,,007cc2,ffffff,,2
-ROD_1071,ROD_51T0001R1,R1,L'Hospitalet de Llobregat - Maçanet-Massanes,,2,,7DBCEC,FFFFFF,,2
+GEN_42634,GEN_1624,L1624,La Granadella - Tarragona - Barcelona (TA),,3,,009485,ffffff,,3
+GEN_42608,GEN_1653,220,Sentmenat - Barcelona per carretera,,3,,009485,ffffff,,3
+GEN_42674,GEN_1656,B9,Can Barata-Sant Quirze del Vallès-Terrassa,,3,,009485,ffffff,,3
+GEN_42679,GEN_1698,L52,TransGran: Sta.Agnès-la Roca-Granollers,,3,,009485,ffffff,,3
+GEN_42674,GEN_1712,B5,Ripollet - Sabadell,,3,,009485,ffffff,,3
+GEN_42725,GEN_1732,L1732,Terres de l'Ebre - UAB,,3,,009485,ffffff,,3
+GEN_42605,GEN_1735,416,la Garriga-Granollers-Montornès (SC),,3,,009485,ffffff,,3
+GEN_42605,GEN_1739,L6,TransGran: les Franqueses - Granollers,,3,,009485,ffffff,,3
+GEN_42642,GEN_1746,M5B,Vacarisses - Estació de Torreblanca,,3,,009485,ffffff,,3
+GEN_42674,GEN_1761,E2.2,Barcelona (Zona Universitària) - Terrassa,,3,,009485,ffffff,,3
+GEN_42605,GEN_1790,L43,TransGran Canovelles (C.Castells)-Granollers,,3,,009485,ffffff,,3
+GEN_42605,GEN_1796,A37,Urbà de Lliçà d'Amunt: Can Xicota-Granollers,,3,,009485,ffffff,,3
+GEN_42605,GEN_1797,A21,Urbà Lliçà d'Amunt: la Serra - Palaudàries,,3,,009485,ffffff,,3
+GEN_42605,GEN_1806,A7,Urbà de Lliçà d'Amunt: Can Montcau-Granollers,,3,,009485,ffffff,,3
+GEN_42608,GEN_1807,245,Sentmenat-Caldes-Palau-Polinyà-Campus UAB,,3,,009485,ffffff,,3
+GEN_42605,GEN_1809,647,Alella - Hospital de Can Ruti (NV),,3,,009485,ffffff,,3
+GEN_42675,GEN_1824,L1824,Berga - Campus UAB,,3,,009485,ffffff,,3
+GEN_42605,GEN_1846,366,Vall del Tenes - Campus UAB,,3,,009485,ffffff,,3
+GEN_42642,GEN_1864,M6A,Viladecavalls - Terrassa (llançadora),,3,,009485,ffffff,,3
+GEN_42608,GEN_2136,232,Polinyà - Sabadell,,3,,009485,ffffff,,3
+GEN_42605,GEN_2154,332,Granollers - Mollet del Vallès - Barcelona,,3,,009485,ffffff,,3
+GEN_42642,GEN_2155,M9,Esparreguera - Abrera - Terrassa,,3,,009485,ffffff,,3
+GEN_42605,GEN_2161,E26,Parets del Vallès - Mollet del Vallès - Barcelona,,3,,009485,ffffff,,3
+GRA_7,GRA_408,L6,Can Bassa - Granollers Centre - Hospital - Can Mònic - Corró d'Avall,,3,,936037,ffffff,,3
+GRA_7,GRA_413,L41,Plaça Constitució Granollers - Canovelles -  Tibel -  Can Gorgui,,3,,f28d00,000000,,3
+GRA_7,GRA_415,L43,Plaça Constitució Granollers -  Piscines Municipals - Polígon Industrial Can Castells,,3,,f78f1e,ffffff,,3
+GRA_7,GRA_590,L51,Granollers Estacions - La Roca - la Roca Village,,3,,db3f8f,ffffff,,3
+GRA_7,GRA_901,L1,Can Gili - Canovelles - Hospital - La Torreta,,3,,13a84c,ffffff,,3
+GRA_7,GRA_920,L20,Can Bassa - Can Mònic - Bellavista,,3,,9b9896,ffffff,,3
+GRA_7,GRA_921,L21,Can Bassa - Hospital,,3,,cc1332,ffffff,,3
+GRA_7,GRA_922,L22,Estació de França - Bellavista,,3,,243267,ffffff,,3
+REG_1071,REG_R11,R11,Barcelona Sants - Cerbère,,2,https://rodalies.gencat.cat/web/.content/02_Horaris/horaris/R11.pdf,0067a1,ffffff,,2
+REG_1071,REG_RL4,RL4,Terrassa Estació del Nord - Lleida Pirineus,,2,https://rodalies.gencat.cat/web/.content/01_Actualitat/2024/12_12_RL4/Horaris-RL4_2024_12_15.pdf,ffdd00,ffffff,,2
 ROD_1071,ROD_51T0003R2N,R2N,Aeroport - Maçanet-Massanes,,2,,D0DF00,FFFFFF,,2
 ROD_1071,ROD_51T0005R4,R4,Sant Vicenç de Calders - Manresa,,2,,F7A30D,FFFFFF,,2
-ROD_1071,ROD_51T0007R2S,R2S,Sant Vicenç de Calders - Barcelona-Estació de França,,2,,146520,FFFFFF,,2
 ROD_1071,ROD_51T0013R2,R2,Castelldefels - Granollers Centre,,2,,07a64a,FFFFFF,,2
-ROD_1071,ROD_51T0015R3,R3,La Garriga - La Tor de Querol-Enveig,,2,,EB4128,FFFFFF,,2
-ROD_1071,ROD_51T0021R7,R7,Fabra i Puig - Cerdanyola - Universitat,,2,,B57CBB,FFFFFF,,2
 ROD_1071,ROD_51T0023R8,R8,Martorell Central - Granollers Centre,,2,,88016A,FFFFFF,,2
 ROD_1071,ROD_Linia Blau Clar_Anada,Linia Blau Clar,Barcelona Fabra i Puig - Centelles,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,3ea5ea,FFFFFF,,3
 ROD_1071,ROD_Linia Blau Clar_Tornada,Linia Blau Clar Tornada,Centelles - Barcelona Fabra i Puig,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,3ea5ea,FFFFFF,,3
 ROD_1071,ROD_Linia Blava_Anada,Linia Blava,Barcelona Fabra i Puig - Granollers Canovelles,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,0065bd,FFFFFF,,3
 ROD_1071,ROD_Linia Blava_Tornada,Linia Blava Tornada,Granollers Canovelles - Barcelona Fabra i Puig,,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,0065bd,FFFFFF,,3
-ROD_1071,ROD_Linia Lila_Anada,Linia Lila,Barcelona Fabra i Puig - La Garriga (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,8e579a,FFFFFF,,3
-ROD_1071,ROD_Linia Lila_Tornada,Linia Lila Tornada,La Garriga - Barcelona Fabra i Puig (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,8e579a,FFFFFF,,3
-ROD_1071,ROD_Linia Verda_Anada,Linia Verda,Barcelona Fabra i Puig - Vic (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,44b853,FFFFFF,,3
-ROD_1071,ROD_Linia Verda_Tornada,Linia Verda Tornada,Vic - Barcelona Fabra i Puig (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,44b853,FFFFFF,,3
-ROD_1071,ROD_Linia Vermella_Anada,Linia Vermella,Barcelona Fabra i Puig - Centelles (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,c81e1e,FFFFFF,,3
-ROD_1071,ROD_Linia Vermella_Tornada,Linia Vermella Tornada,Centelles - Barcelona Fabra i Puig (directe),,3,https://rodalies.gencat.cat/web/.content/01_Actualitat/2025/06_12_PAT_R3/horaris-bus-297x900.pdf,c81e1e,FFFFFF,,3
-ROD_1071,ROD_RL3,RL3,Cervera - Lleida Pirineus,,2,https://rodalies.gencat.cat/web/.content/02_Horaris/horaris/RL3RL4.pdf,8b8719,FFFFFF,,2
-ROD_1071,ROD_RT2,RT2,Tarragona-Salou - Port Aventura,,2,https://rodalies.gencat.cat/web/.content/02_Horaris/horaris/R17_RT2.pdf,db87b9,FFFFFF,,2
-SAB_1,SAB_26,L3,L3-LES PLANES - LA FLORESTA - FGC SANT CUGAT,,3,,17cf00,ccffff,,3
+RUB_1,RUB_1,1,EL PINAR - CAN SERRAFOSSÀ,,3,,ff0000,ffffff,,3
+RUB_1,RUB_2,2,CAN VALLHONRAT - EL PINAR,,3,,ffff00,ffffff,,3
+RUB_1,RUB_3,3,ESTACIÓ RUBÍ+D - CASTELLNOU,,3,,ff8040,ffffff,,3
+RUB_1,RUB_4,4,ESTACIÓ RUBÍ+D - CAN ROSÉS,,3,,0000ff,ffffff,,3
+RUB_1,RUB_5,5,CAN ROSÉS - ESTACIÓ RUBÍ+D,,3,,008000,ffffff,,3
+RUB_1,RUB_6,6,RUBÍ SUD - POL. LA BASTIDA,,3,,804000,ffffff,,3
+RUB_1,RUB_7,7,ESTACIÓ RUBÍ+D - CAN SOLÀ,,3,,800080,ffffff,,3
+SAB_1,SAB_1,C1,C1-SABADELL - CASTELLAR,,3,,f70046,ccffff,,3
+SAB_1,SAB_10,N67,N67-TERRASSA - VACARISSES,,3,,7b5700,ccffff,,3
+SAB_1,SAB_103,648,648-MONTCADA - UAB - BELLATERRA,,3,,f70000,ccffff,,3
+SAB_1,SAB_14,B1,B1-BADIA - SABADELL,,3,,f70004,ccffff,,3
+SAB_1,SAB_15,B2,B2-SABADELL - RIPOLLET,,3,,f70023,ccffff,,3
+SAB_1,SAB_16,A2,A2-BADIA - BARCELONA,,3,,f7000c,ccffff,,3
+SAB_1,SAB_167,SU3,SU3-SERVEI URBA CERDANYOLA DEL VALLES 3,,3,,9a008d,ccffff,,3
+SAB_1,SAB_18,B3,B3-SABADELL - MATADEPERA,,3,,f70000,ccffff,,3
+SAB_1,SAB_19,A1,A1-SABADELL - BARCELONA,,3,,f70010,ccffff,,3
+SAB_1,SAB_2,C2,C2-SABADELL - TERRASSA - MARTORELL,,3,,f70000,ccffff,,3
+SAB_1,SAB_22,B4,B4-BADIA - CERDANYOLA,,3,,f70010,ccffff,,3
+SAB_1,SAB_249,C7,C7-CAN RULL - HOSP.TERRASSA - CASTELLBISBAL,,3,,f70010,ccffff,,3
+SAB_1,SAB_297,e1,E1-BARCELONA - SABADELL - CASTELLAR DEL VALLÈS,,3,,0a8ba0,ccffff,,3
+SAB_1,SAB_298,e2.1,E2.1-BARCELONA - TERRASSA,,3,,0a8ab0,ccffff,,3
+SAB_1,SAB_299,e3,E3-BARCELONA - CERDANYOLA - UAB,,3,,0a8baa,ccffff,,3
+SAB_1,SAB_3,C3,C3-SABADELL - CASTELLAR - SANT LLORENÇ,,3,,f70000,ccffff,,3
+SAB_1,SAB_30,LB1,LB1-PL. ESPANYA - BARICENTRO,,3,,f7002f,ccffff,,3
 SAB_1,SAB_307,PA,PA-FGC BELLATERRA - RENFE UAB - PARC DE L`ALBA,,3,,f70023,ccffff,,3
-SVH_58,SVH_462,ESC,Estació FGC - G. Mistral - F. Mompou,,3,,633b65,ffffff,,3
+SAB_1,SAB_32,B8,B8-TERRASSA - RUBÍ - SANT CUGAT DEL VALLÈS,,3,,f70000,ccffff,,3
+SAB_1,SAB_339,B5,B5-RIPOLLET A SABADELL (DIRECTE),,3,,ff050d,bbffff,,3
+SAB_1,SAB_34,SU2,SU2-SERVEI URBA CERDANYOLA DEL VALLES 2,,3,,f7000c,ccffff,,3
+SAB_1,SAB_36,N61,BARCELONA - RUBI - TERRASSA - SABADELL - BARCELONA,,3,,6dd700,ccffff,,3
+SAB_1,SAB_360,e2.2,E2.2-TERRASSA-ZONA UNIVERSITÀRIA,,3,,0a8ab0,ffffff,,3
+SAB_1,SAB_361,B9,B9-CAN BARATA-SANT QUIRZE-TERRASSA,,3,,f70004,ccffff,,3
+SAB_1,SAB_37,N62,N62-BARCELONA - UAB - SANT CUGAT,,3,,8c6a00,ccffff,,3
+SAB_1,SAB_38,N66,N66-TERRASSA - MATADEPERA,,3,,56009a,ccffff,,3
+SAB_1,SAB_39,N64,BARCELONA - SABADELL - TERRASSA - RUBI - BARCELONA,,3,,28a300,ccffff,,3
+SAB_1,SAB_4,B6,B6-UAB - BADIA - SABADELL,,3,,f7004e,ccffff,,3
+SAB_1,SAB_44,C5,C5-SABADELL - TERRASSA,,3,,f7002f,ccffff,,3
+SAB_1,SAB_8,N65,N65-BARCELONA - SABADELL - CASTELLAR,,3,,f7000c,ccffff,,3
+SAG_13,SAG_295,295,Santa Perpètua de Mogoda - La Llagosta - Santa Perpètua de Mogoda,,3,,002f6c,ffffff,,3
+SAG_13,SAG_320,320,Barcelona - Mollet del Vallès,,3,,002f6c,ffffff,,3
+SAG_13,SAG_321,e21,Mollet del Vallès - Barcelona (per autopista),,3,,0fb330,ffffff,,3
+SAG_13,SAG_324,e26,Parets del Vallès - Mollet del Vallès - Barcelona,,3,,4bb431,ffffff,,3
+SAG_13,SAG_326,e7,Barcelona - La Vall del Tenes,,3,,4bb431,ffffff,,3
+SAG_13,SAG_330,330,Mollet del Vallès - Granollers,,3,,002f6c,ffffff,,3
+SAG_13,SAG_332,332,Barcelona - Mollet - Granollers (per autopista),,3,,002f6c,ffffff,,3
+SAG_13,SAG_335,335,Granollers - Polinyà,,3,,002f6c,ffffff,,3
+SAG_13,SAG_340,340,Granollers - Sant Feliu de Codines,,3,,002f6c,ffffff,,3
+SAG_13,SAG_343,389.1,Estació Mollet/Sant Fost - Sant Fost (Ajuntament),389.1 Estació Mollet/Sant Fost - Sant Fost (Ajuntament),3,,1e00c8,ffffff,,3
+SAG_13,SAG_344,389.2,Sant Fost (Ajuntament) - La Conreria,389.2 Sant Fost (Ajuntament) - Sant Fost (La Conreria),3,,1e00c8,ffffff,,3
+SAG_13,SAG_345,345,Parets del Vallès - Hospital de Mollet - Santa Perpètua de Mogoda,,3,,002f6c,ffffff,,3
+SAG_13,SAG_346,389.3,Servei Escolar La Conreria - Mas Corts,389.3 Servei Instituts La Conreria - Mas Corts,3,,1e00c8,ffffff,,3
+SAG_13,SAG_348,348,Servei Urbà de l'Ametlla del Vallès - Granollers,,3,,002f6c,ffffff,,3
+SAG_13,SAG_349,A37,Centre - Xicota - Montcau - Granollers,,3,,337421,ffffff,,3
+SAG_13,SAG_354,389.4,Servei Escolar Mas Llombart,389.4 Servei Escolar Mas Llombart,3,,009989,FFFFFF,,3
+SAG_13,SAG_355,355,Martorelles - Mollet del Vallès (No passa per Can Sunyer),,3,,002f6c,ffffff,,3
+SAG_13,SAG_356,356,Martorelles - Mollet del Vallès (passa per Can Sunyer),,3,,002f6c,ffffff,,3
+SAG_13,SAG_358,LV1,Can Salgot - Centre,Lliçà de Vall,3,,002f6c,fffcff,,3
+SAG_13,SAG_359,LV2,Ca l'Estapé - Centre,LLiçà de Vall,3,,002f6c,ffffff,,3
+SAG_13,SAG_360,360,Badalona - St. Fost - Mollet del Vallès - Sabadell,,3,,002f6c,ffffff,,3
+SAG_13,SAG_365,365,Santa Perpètua de Mogoda - Mollet del Vallès - U.A.B.,,3,,002f6c,ffffff,,3
+SAG_13,SAG_366,366,U.A.B. Bellaterra - La Vall del Tenes,U.A.B. - La Vall del Tenes,3,,002f6c,ffffff,,3
+SAG_13,SAG_370,370,Pol. Industrials (Est. Parets  - Estació de Motmeló - Est. Parets ),,3,,002f6c,ffffff,,3
+SAG_13,SAG_372,A21,La Serra - Palaudàries,,3,,b8d405,ffffff,,3
+SAG_13,SAG_375,375,Pol. Industrials (Est. Montmeló - Parets del Vallès - Est. Montmeló),,3,,002f6c,ffffff,,3
+SAG_13,SAG_376,376,Poligons Industrials de Mollet del Vallès  i Martorelles - Mollet del Vallès,,3,,002f6c,ffffff,,3
+SAG_13,SAG_378,A7,Centre - Can Montcau - Granollers,Centre - Can Montclau - Granollers,3,,873687,ffffff,,3
+SAG_13,SAG_380,N71,Barcelona - Mollet del Vallès - Granollers (nocturn),,3,,002f6c,ffffff,,3
+SAG_13,SAG_381,N71,Granollers - Mollet del Vallès - Barcelona (nocturn),,3,,002f6c,ffffff,,3
+SAG_13,SAG_389,389,Servei Urbà de Sant Fost de Campsentelles,,3,,002f6c,ffffff,,3
+SAG_13,SAG_390,390,Servei Urbà de Parets del Vallès,,3,,002f6c,ffffff,,3
+SAG_13,SAG_393,A5,Lliçà d'Amunt - Can Xicota - Granollers,,3,,fff205,000000,,3
+SAG_13,SAG_395,A1,Centre - Palaudàries,,3,,007ecc,ffffff,,3
+SAG_13,SAG_396,L.1,Servei Urbà Mollet del Vallès,,3,,002f6c,ffffff,,3
+SAG_13,SAG_400,400,Barcelona - Granollers (per autopista),,3,,002f6c,ffffff,,3
+SAG_13,SAG_412,412,UAB Bellaterra  - Parets del Vallès - Granollers,UAB Bellaterra - Parets del Vallès - Granollers,3,,002f6c,ffffff,,3
+SAG_13,SAG_420,420,Granollers - Caldes de Montbui,,3,,002f6c,ffffff,,3
+SAG_13,SAG_427,427,Vallromanes - Vilanova - Montornès - Montmeló,Vallromanes - Montmeló,3,,00306a,ffffff,,3
+SAG_13,SAG_428,428,Granollers - Montmeló - Montornés,Granollers - Montornés,3,,002e6b,ffffff,,3
+SAG_13,SAG_429,429,Granollers - La Garriga,La Garriga - Granollers,3,,00306a,ffffff,,3
+SAG_13,SAG_430,430,Barcelona - Centre Penitenciari Quatre Camins,,3,,002f6c,ffffff,,3
+SAG_13,SAG_480,N72,Bcn - La Garriga - Granollers - Bcn (nocturn),,3,,78b63e,ffffff,,3
+SAG_13,SAG_500,500,Barcelona - La Roca - Granollers (per carretera de La Roca),,3,,002f6c,ffffff,,3
+SAG_13,SAG_501,501,Barcelona - Montornès del Vallès (per autopista),,3,,002f6c,ffffff,,3
+SAG_13,SAG_502,502,Barcelona - Granollers - Llinars del Vallès,,3,,002f6c,ffffff,,3
+SAG_13,SAG_596,596,Servei Urbà de Vilanova del Vallès i Vallromanes a Granollers,,3,,002f6c,ffffff,,3
+SAG_13,SAG_641,641,El Masnou - Alella - Granollers,,3,,002f6c,ffffff,,3
+SAG_13,SAG_642,e19,Barcelona - Alella - Vallromanes - Vilanova del Vallès,,3,,0fb330,ffffff,,3
+SAG_13,SAG_644,644,Barcelona - El Masnou - Alella - Vallromanes,,3,,002f6c,ffffff,,3
+SAG_13,SAG_646,646,El Masnou - Alella Urbanitzacions - El Masnou,,3,,002f6c,ffffff,,3
+TEI_TEISA,TEI_15,L015,Olot-U.A.Bellaterra per Banyoles,,3,,009989,FFFFFF,,3
+TEI_TEISA,TEI_27,L027,Olot-U.A.Bellaterra per Amer,,3,,009989,FFFFFF,,3
+TGO_AMB,TGO_CS2,CS2,Castellbisbal - Bus urbà (Costa Blanca - Can Santeugini),,3,https://horaris.gruptg.com/tgo/?linia=L2A,0037ff,ffffff,,3
+TGO_TGO,TGO_L59A,L59A,St. Vicenç dels Horts - Terrassa,,3,https://horaris.gruptg.com/tgo/?linia=L59A,0037ff,ffffff,,3
+TGO_TGO,TGO_M1,M1,Olesa - Terrassa - Bellaterra,,3,https://horaris.gruptg.com/tgo/?linia=M1,0037ff,ffffff,,3
+TGO_TGO,TGO_M11,M11,Terrassa-Coll d'Estenalles-Mura/Talamanca,,3,https://horaris.gruptg.com/tgo/?linia=M11,0037ff,ffffff,,3
+TGO_TGO,TGO_M12,M12,Terrassa-Rellinars-Castellbell i el Vilar,,3,https://horaris.gruptg.com/tgo/?linia=M12,0037ff,ffffff,,3
+TGO_TGO,TGO_M13,M13,Vacarisses-Castellbell i el Vilar,,3,https://horaris.gruptg.com/tgo/?linia=M13,0037ff,ffffff,,3
+TGO_TGO,TGO_M2,M2,Olesa - Ribes Blaves - Oasis,,3,https://horaris.gruptg.com/tgo/?linia=M2,0037ff,ffffff,,3
+TGO_TGO,TGO_M4,M4,Olesa-Sta.Maria de Vilalba-Martorell,,3,https://horaris.gruptg.com/tgo/?linia=M4,0037ff,ffffff,,3
+TGO_TGO,TGO_M5,M5,Terrassa-Vacarisses,,3,https://horaris.gruptg.com/tgo/?linia=M5,0037ff,ffffff,,3
+TGO_TGO,TGO_M5A,M5A,Vacarisses-Institut,,3,https://horaris.gruptg.com/tgo/?linia=M5A,0037ff,ffffff,,3
+TGO_TGO,TGO_M5B,M5B,Vacarisses-Estació/IES,,3,https://horaris.gruptg.com/tgo/?linia=M5B,0037ff,ffffff,,3
+TGO_TGO,TGO_M6,M6,Viladecavalls-Terrassa,,3,https://horaris.gruptg.com/tgo/?linia=M6,0037ff,ffffff,,3
+TGO_TGO,TGO_M6A,M6A,Llançadora Viladecavalls - Terrassa,,3,https://horaris.gruptg.com/tgo/?linia=M6A,0037ff,ffffff,,3
+TGO_TGO,TGO_M7,M7,Terrassa-Ullastrell,,3,https://horaris.gruptg.com/tgo/?linia=M7,0037ff,ffffff,,3
+TGO_TGO,TGO_M8A,M8A,Terrassa-Matadepera,,3,https://horaris.gruptg.com/tgo/?linia=M8A,0037ff,ffffff,,3
 TGO_TGO,TGO_M8D,M8D,Matadepera-Terrassa FGC/RENFE,,3,https://horaris.gruptg.com/tgo/?linia=M8D,0037ff,ffffff,,3
+TGO_TGO,TGO_M9,M9,Esparreguera - Abrera - Terrassa,,3,https://horaris.gruptg.com/tgo/?linia=M9,0037ff,ffffff,,3
 TUS_109,TUS_1000,L15,La Bassa - Centre,,3,http://www.tus.es,c7921e,ffffff,,3
-TUS_109,TUS_1411,N1,Can Deu - Plaça Picasso,,3,http://www.tus.es,e06178,ffffff,,3
-TUS_109,TUS_1412,N4,El Poblenou - Els Merinals,,3,http://www.tus.es,3de184,ffffff,,3
-TUS_109,TUS_1422,SEM,SETMANA EUROPEA DE LA MOBILITAT,,3,http://www.tus.es,0099cc,ffffff,,3
 TUS_109,TUS_978,L12,Estació Centre - Sant Quirze Parc,,3,http://www.tus.es,7b7223,ffffff,,3
 TUS_109,TUS_979,L1,Can Deu - Estació Sud,,3,http://www.tus.es,e63027,ffffff,,3
 TUS_109,TUS_980,L2,Can Deu - La Creu de Barberà,,3,http://www.tus.es,004996,ffffff,,3
@@ -74,8 +305,6 @@ TUS_109,TUS_988,F2,Can Deu - La Creu de Barberà,,3,http://www.tus.es,9794d2,fff
 TUS_109,TUS_989,F3,La Plana del Pintor - La Romànica,,3,http://www.tus.es,dcc555,ffffff,,3
 TUS_109,TUS_990,F4,La Roureda - El Poblenou,,3,http://www.tus.es,7cdfa8,ffffff,,3
 TUS_109,TUS_991,F5,Castellarnau - Les Termes,,3,http://www.tus.es,f8a7d7,ffffff,,3
-TUS_109,TUS_992,F6,Pl. Catalunya - S.P. Riu-sec (Festius Comercials),,3,http://www.tus.es,b0d2f0,ffffff,,3
-TUS_109,TUS_993,F15,La Bassa - Centre,,3,http://www.tus.es,c7921e,ffffff,,3
 TUS_109,TUS_994,L10,Sant Julià - Plaça de Picasso,,3,http://www.tus.es,c4d984,000000,,3
 TUS_109,TUS_995,L11,Castellarnau - Sant Pau de Riu-sec,,3,http://www.tus.es,b0d2f0,000000,,3
 TUS_109,TUS_996,L23,Can Roqueta - Torre-romeu,,3,http://www.tus.es,acaa9f,000000,,3

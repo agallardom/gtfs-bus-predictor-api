@@ -187,6 +187,8 @@
                         });
                     }
                 }
+
+                console.log("json:", group);
                 
                 let groupsHTML = groups.map(group => {
                     const stopCount = Object.keys(group.stops).length; // Contar paradas
@@ -198,15 +200,29 @@
                     const userIconClass = isExpanded ? 'text-indigo-600' : 'text-red-500 dark:text-red-400';
                     const headerBgClass = isExpanded ? 'bg-indigo-100 dark:bg-indigo-900/50' : 'hover:bg-gray-50 dark:hover:bg-gray-700';
 
+    
+                    // Icono SVG de ubicación (extraído de sitios como Heroicons o similar)
+                    const locationIcon = `<svg class="w-4 h-4 mr-2 text-green-500 dark:text-green-400 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>`;
+
                     let content = '';
                     if (isExpanded) {
                         // Asumiendo que 'group.stops' es el array de JSON:
                         const stopsList = group.stops.map(parada => {
                             // 'map' retorna implícitamente la cadena HTML en cada iteración
-                            return `<li class="p-2 bg-white dark:bg-gray-800 rounded-md text-sm text-gray-800 dark:text-gray-200 border-l-4 border-green-500">
-                                        <span class="font-bold text-indigo-600 dark:text-indigo-300">${parada.stop_name}</span> 
-                                        <span class="font-mono text-gray-500 dark:text-gray-400">(${parada.stop_id})</span>
-                                    </li>`;
+                            // Construye la URL de Google Maps
+                            const mapUrl = `https://maps.google.com/maps?q=${parada.lat},${parada.lon}(${parada.stop_name})`;
+                            // const mapUrl = `https://www.google.com/maps/search/?api=1&query=${parada.lat},${parada.lon}`;
+
+                            return `<li class="p-3 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                                <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center text-gray-800 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
+                                    ${locationIcon} 
+                                    <div class="flex-grow">
+                                        <span class="font-bold text-lg">${parada.stop_name}</span>
+                                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">(${parada.stop_id})</span>
+                                    </div>
+                                    <svg class="w-5 h-5 ml-auto text-gray-400 dark:text-gray-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </a>
+                            </li>`;
                         }).join(''); // <--- Une todas las cadenas HTML en una sola.
 
                         // --------------------------------------------------
