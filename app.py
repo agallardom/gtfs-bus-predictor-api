@@ -35,6 +35,10 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}) 
 # =================================================================
 
+@app.route('/', methods=['GET']) 
+def health_check(): 
+    """Ruta para verificar el estado del servicio.""" 
+    return jsonify({"status": "ok", "service": "GTFS Predictor API is running"})
 
 # Variables globales para almacenar los datos GTFS cargados una sola vez
 # Esto evita recargar los archivos .txt en cada petición.
